@@ -1,0 +1,54 @@
+prodotto,quantità_attuale,unità,soglia_riordino
+Pomodori,10,kg,2.0
+Mozzarella,5,kg,1.0
+Guanciale,3,kg,1.0
+Uova,30,pz,10.0
+Pecorino Romano,2,kg,0.5
+Pasta Bigoli,20,kg,5.0
+Costata di Manzo,10,kg,2.0
+Vino Rosso,20,bottiglie,5.0
+Acqua Naturale,50,bottiglie,10.0
+Olio d'oliva,5,litri,1.0
+Carne di Anatra,3,kg,1.0
+Salsiccia,4,kg,1.0
+Asparagi,2,kg,0.5
+Cime di Rapa,3,kg,0.5
+Carne di Picanha,5,kg,1.0
+Lombatello,4,kg,1.0
+Verdure Miste,10,kg,2.0
+Polenta Fritta,5,kg,1.0
+Scamorza Affumicata,3,kg,0.5
+Biscotti,3,kg,1.0
+Cioccolato Fondente,2,kg,0.5
+Cacao,1,kg,0.2
+Frutti di Bosco,3,kg,0.5
+Formaggio Spalmabile,2,kg,0.5
+Mascarpone,4,kg,1.0
+Savoiardi,2,kg,0.5
+Vino Passito,3,bottiglie,1.0
+Olio per frittura,3,litri,0.5
+Pepe Nero,30,pz,4.0
+Orecchiette,20,pz,4.0
+Pasta Paccheri,10,pz,4.0
+Uovo,20,pz,4.0
+Fiorentina di Manzo,13,pz,4.0
+Sale,2,pz,4.0
+Fiorentina di Fassona,2,pz,4.0
+Costata di Fassona,3,pz,4.0
+Fiorentina Dry Aged,4,pz,4.0
+Costata Dry Aged,3,pz,4.0
+Costata Angus,6,pz,4.0
+Spezie,6,pz,4.0
+Angus,4,pz,4.0
+Manzo,2,pz,4.0
+Carne di Manzo,4,pz,4.0
+Cipolla di Tropea,5,pz,4.0
+Capperi,6,pz,4.0
+Salsa Worcestershire,4,pz,4.0
+Senape,5,pz,4.0
+Tagliata di Manzo,4,pz,4.0
+Sovracosce di Pollo,6,pz,4.0
+Filetto di Manzetta,4,pz,4.0
+Picanha,5,pz,4.0
+Tagliata di Pollo,4,pz,4.0
+Tagliata di Lombatello,5,pz,4.0
