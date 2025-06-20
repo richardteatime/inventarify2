@@ -53,24 +53,30 @@ if uploaded_vendite:
 # Pulsante reset vendite
 if section == "🧾 Vendite":
     if st.button("🗑️ Reset Vendite"):
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM vendite")
-        conn.commit()
-        conn.close()
-        st.success("✅ Tutte le vendite sono state eliminate.")
-        st.session_state["_rerun_trigger"] = not st.session_state.get("_rerun_trigger", False)
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM vendite")
+            conn.commit()
+            conn.close()
+            st.success("✅ Tutte le vendite sono state eliminate.")
+            st.session_state["_rerun_trigger"] = not st.session_state.get("_rerun_trigger", False)
+        except Exception as e:
+            st.error(f"❌ Errore durante l'eliminazione delle vendite: {e}")
 
 # Pulsante reset magazzino
 if section == "📦 Prodotti Magazzino":
     if st.button("🗑️ Reset Magazzino"):
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM prodotti_magazzino")
-        conn.commit()
-        conn.close()
-        st.success("✅ Tutti i dati del magazzino sono stati eliminati.")
-        st.session_state["_rerun_trigger"] = not st.session_state.get("_rerun_trigger", False)
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM prodotti_magazzino")
+            conn.commit()
+            conn.close()
+            st.success("✅ Tutti i dati del magazzino sono stati eliminati.")
+            st.session_state["_rerun_trigger"] = not st.session_state.get("_rerun_trigger", False)
+        except Exception as e:
+            st.error(f"❌ Errore durante l'eliminazione del magazzino: {e}")
 
 # HOME
 if section == "🏠 Home":
