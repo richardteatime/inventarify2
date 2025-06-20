@@ -1,8 +1,6 @@
 # inventarify2
 # 🧠 Sistema Intelligente di Gestione Magazzino
 
-![Flowchart](img/flowchart2.png)
-
 Questo progetto è un'applicazione interattiva basata su **Streamlit** per la gestione automatizzata del magazzino di un ristorante.  
 Il sistema combina vendite, ricette e scorte per generare analisi, suggerire riordini e mantenere l'inventario sempre aggiornato.
 
