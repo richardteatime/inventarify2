@@ -13,8 +13,8 @@
 	let showForm = false;
 	let newProdotto: Omit<Prodotto, '$id'> = {
 		prodotto: '',
-		quantità_attuale: 0,
-		unità: 'kg',
+		quantita_attuale: 0,
+		unita: 'kg',
 		soglia_riordino: 0,
 		fornitore: '',
 		costo_unitario: 0,
@@ -37,7 +37,7 @@
 		try {
 			await createProdotto(newProdotto);
 			addToast('Prodotto aggiunto', 'success');
-			newProdotto = { prodotto: '', quantità_attuale: 0, unità: 'kg', soglia_riordino: 0, fornitore: '', costo_unitario: 0, note: '' };
+			newProdotto = { prodotto: '', quantita_attuale: 0, unita: 'kg', soglia_riordino: 0, fornitore: '', costo_unitario: 0, note: '' };
 			showForm = false;
 			await loadData();
 		} catch (e: any) {
@@ -70,7 +70,7 @@
 	$: filtered = prodotti.filter(p => 
 		p.prodotto.toLowerCase().includes(search.toLowerCase())
 	);
-	$: sottoSoglia = filtered.filter(p => p.quantità_attuale < p.soglia_riordino);
+	$: sottoSoglia = filtered.filter(p => p.quantita_attuale < p.soglia_riordino);
 </script>
 
 <svelte:head>
@@ -111,11 +111,11 @@
 			</div>
 			<div>
 				<label class="text-caption text-shade-50 block mb-xs">Quantità</label>
-				<input type="number" step="0.01" bind:value={newProdotto.quantità_attuale} class="input-text" />
+				<input type="number" step="0.01" bind:value={newProdotto.quantita_attuale} class="input-text" />
 			</div>
 			<div>
 				<label class="text-caption text-shade-50 block mb-xs">Unità</label>
-				<select bind:value={newProdotto.unità} class="input-text">
+				<select bind:value={newProdotto.unita} class="input-text">
 					<option>kg</option>
 					<option>litri</option>
 					<option>botteglie</option>
@@ -168,15 +168,15 @@
 						</td>
 						<td class="px-md py-sm">
 							{#if editingId === p.$id}
-								<input type="number" step="0.01" bind:value={p.quantità_attuale} class="input-text text-body-md py-xs px-sm w-24" />
+								<input type="number" step="0.01" bind:value={p.quantita_attuale} class="input-text text-body-md py-xs px-sm w-24" />
 							{:else}
-								<span class="text-body-md text-ink">{p.quantità_attuale}</span>
+								<span class="text-body-md text-ink">{p.quantita_attuale}</span>
 							{/if}
 						</td>
-						<td class="px-md py-sm text-body-md text-shade-60">{p.unità}</td>
+						<td class="px-md py-sm text-body-md text-shade-60">{p.unita}</td>
 						<td class="px-md py-sm text-body-md text-shade-60">{p.soglia_riordino}</td>
 						<td class="px-md py-sm">
-							{#if p.quantità_attuale < p.soglia_riordino}
+							{#if p.quantita_attuale < p.soglia_riordino}
 								<span class="pill-tag-danger">Sotto soglia</span>
 							{:else}
 								<span class="pill-tag-mint">OK</span>
@@ -184,7 +184,7 @@
 						</td>
 						<td class="px-md py-sm text-right">
 							{#if editingId === p.$id}
-								<button on:click={() => handleUpdate(p.$id!, { quantità_attuale: p.quantità_attuale, prodotto: p.prodotto })} class="text-caption text-aloe-10 hover:text-ink mr-sm">✓</button>
+								<button on:click={() => handleUpdate(p.$id!, { quantita_attuale: p.quantita_attuale, prodotto: p.prodotto })} class="text-caption text-aloe-10 hover:text-ink mr-sm">✓</button>
 								<button on:click={() => editingId = null} class="text-caption text-shade-50 hover:text-ink">✕</button>
 							{:else}
 								<button on:click={() => editingId = p.$id!} class="text-caption text-shade-50 hover:text-ink mr-sm">✏️</button>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Migrazione dati CSV MVP → Appwrite.
+Migrazione dati CSV MVP → Appwrite (HTTP REST diretto).
 
 Uso:
     export APPWRITE_ENDPOINT=https://appwrite.tuodominio.it/v1
@@ -12,26 +12,34 @@ Uso:
 import os
 import sys
 import csv
+import requests
 
-from appwrite.client import Client
-from appwrite.services.databases import Databases
-from appwrite.id import ID
-
-ENDPOINT = os.environ.get("APPWRITE_ENDPOINT", "https://appwrite.tuodominio.it/v1")
+ENDPOINT = os.environ.get("APPWRITE_ENDPOINT", "").rstrip("/")
 PROJECT = os.environ.get("APPWRITE_PROJECT", "")
 API_KEY = os.environ.get("APPWRITE_API_KEY", "")
 DB_ID = "inventarify"
 
-if not PROJECT or not API_KEY:
-    print("❌ Imposta APPWRITE_PROJECT e APPWRITE_API_KEY")
+if not ENDPOINT or not PROJECT or not API_KEY:
+    print("❌ Imposta APPWRITE_ENDPOINT, APPWRITE_PROJECT e APPWRITE_API_KEY")
     sys.exit(1)
 
-client = Client()
-client.set_endpoint(ENDPOINT)
-client.set_project(PROJECT)
-client.set_key(API_KEY)
+HEADERS = {
+    "X-Appwrite-Project": PROJECT,
+    "X-Appwrite-Key": API_KEY,
+    "Content-Type": "application/json",
+}
 
-databases = Databases(client)
+
+def api_post(path, payload):
+    url = f"{ENDPOINT}{path}"
+    r = requests.post(url, headers=HEADERS, json=payload)
+    return r
+
+
+def api_get(path, params=None):
+    url = f"{ENDPOINT}{path}"
+    r = requests.get(url, headers=HEADERS, params=params)
+    return r
 
 
 def read_csv(filename):
@@ -43,21 +51,28 @@ def read_csv(filename):
         return list(csv.DictReader(f))
 
 
+def create_doc(collection, data):
+    r = api_post(f"/databases/{DB_ID}/collections/{collection}/documents", {
+        "documentId": "unique()",
+        "data": data,
+    })
+    return r.status_code in (201, 200)
+
+
 def migrate_prodotti():
     rows = read_csv("prodotti_magazzino.csv")
     if not rows:
         return
     print(f"📦 Prodotti: {len(rows)} righe...")
     for row in rows:
-        try:
-            databases.create_document(DB_ID, "prodotti", ID.unique(), {
-                "prodotto": row["prodotto"],
-                "quantità_attuale": float(row["quantità_attuale"]),
-                "unità": row["unità"],
-                "soglia_riordino": float(row["soglia_riordino"]),
-            })
-        except Exception as e:
-            print(f"  ❌ {row.get('prodotto')}: {e}")
+        ok = create_doc("prodotti", {
+            "prodotto": row["prodotto"],
+            "quantita_attuale": float(row["quantità_attuale"]),
+            "unita": row["unità"],
+            "soglia_riordino": float(row["soglia_riordino"]),
+        })
+        if not ok:
+            print(f"  ❌ Errore: {row.get('prodotto')}")
     print("  ✅ Prodotti migrati")
 
 
@@ -67,14 +82,13 @@ def migrate_menu():
         return
     print(f"🍽️ Menu: {len(rows)} righe...")
     for row in rows:
-        try:
-            databases.create_document(DB_ID, "menu", ID.unique(), {
-                "piatto": row["piatto"],
-                "prodotto": row["prodotto"],
-                "quantità_prodotto": float(row["quantità_prodotto"]),
-            })
-        except Exception as e:
-            print(f"  ❌ {row.get('piatto')}: {e}")
+        ok = create_doc("menu", {
+            "piatto": row["piatto"],
+            "prodotto": row["prodotto"],
+            "quantita_prodotto": float(row["quantità_prodotto"]),
+        })
+        if not ok:
+            print(f"  ❌ Errore: {row.get('piatto')}")
     print("  ✅ Menu migrato")
 
 
@@ -84,50 +98,47 @@ def migrate_vendite():
         return
     print(f"🧾 Vendite: {len(rows)} righe...")
     for row in rows:
-        try:
-            databases.create_document(DB_ID, "vendite", ID.unique(), {
-                "data": row["data"],
-                "piatto": row["piatto"],
-                "quantità_venduta": int(row["quantità_venduta"]),
-            })
-        except Exception as e:
-            print(f"  ❌ {row.get('piatto')}: {e}")
+        ok = create_doc("vendite", {
+            "data": row["data"],
+            "piatto": row["piatto"],
+            "quantita_venduta": int(row["quantità_venduta"]),
+        })
+        if not ok:
+            print(f"  ❌ Errore: {row.get('piatto')}")
     print("  ✅ Vendite migrate")
 
 
 def migrate_consumi():
-    """Calcola consumi da vendite × menu e li salva."""
     print("🧮 Calcolo consumi...")
     vendite = []
     menu = []
-    try:
-        vendite_res = databases.list_documents(DB_ID, "vendite")
-        vendite = vendite_res["documents"]
-        menu_res = databases.list_documents(DB_ID, "menu")
-        menu = menu_res["documents"]
-    except Exception as e:
-        print(f"  ❌ Errore lettura dati: {e}")
-        return
+
+    r1 = api_get(f"/databases/{DB_ID}/collections/vendite/documents")
+    if r1.status_code == 200:
+        vendite = r1.json().get("documents", [])
+
+    r2 = api_get(f"/databases/{DB_ID}/collections/menu/documents")
+    if r2.status_code == 200:
+        menu = r2.json().get("documents", [])
 
     consumi = {}
     for v in vendite:
-        ricetta = [m for m in menu if m["piatto"] == v["piatto"]]
+        ricetta = [m for m in menu if m.get("piatto") == v.get("piatto")]
         for r in ricetta:
-            key = (v["data"], r["prodotto"])
+            key = (v.get("data"), r.get("prodotto"))
             if key not in consumi:
                 consumi[key] = 0
-            consumi[key] += v["quantità_venduta"] * r["quantità_prodotto"]
+            consumi[key] += v.get("quantita_venduta", 0) * r.get("quantita_prodotto", 0)
 
     for (data, prodotto), qty in consumi.items():
-        try:
-            databases.create_document(DB_ID, "consumi", ID.unique(), {
-                "data": data,
-                "prodotto": prodotto,
-                "quantità_consumata": round(qty, 3),
-                "fonte": "vendita",
-            })
-        except Exception as e:
-            print(f"  ❌ {prodotto}: {e}")
+        ok = create_doc("consumi", {
+            "data": data,
+            "prodotto": prodotto,
+            "quantita_consumata": round(qty, 3),
+            "fonte": "vendita",
+        })
+        if not ok:
+            print(f"  ❌ Errore consumo: {prodotto}")
 
     print(f"  ✅ {len(consumi)} consumi calcolati e salvati")
 

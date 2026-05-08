@@ -13,7 +13,7 @@
 	let newItem: Omit<MenuItem, '$id'> = {
 		piatto: '',
 		prodotto: '',
-		quantità_prodotto: 0,
+		quantita_prodotto: 0,
 		porzione_default: 1
 	};
 
@@ -33,7 +33,7 @@
 		try {
 			await createMenuItem(newItem);
 			addToast('Ingrediente aggiunto alla ricetta', 'success');
-			newItem = { piatto: newItem.piatto, prodotto: '', quantità_prodotto: 0, porzione_default: 1 };
+			newItem = { piatto: newItem.piatto, prodotto: '', quantita_prodotto: 0, porzione_default: 1 };
 			await loadData();
 		} catch (e: any) {
 			addToast(e.message || 'Errore', 'error');
@@ -100,7 +100,7 @@
 			</div>
 			<div>
 				<label class="text-caption text-shade-50 block mb-xs">Quantità / porzione</label>
-				<input type="number" step="0.001" bind:value={newItem.quantità_prodotto} class="input-text" />
+				<input type="number" step="0.001" bind:value={newItem.quantita_prodotto} class="input-text" />
 			</div>
 			<div>
 				<label class="text-caption text-shade-50 block mb-xs">Unità</label>
@@ -133,7 +133,7 @@
 						{#each grouped[piatto] as item}
 							<tr class="border-b border-hairline-light last:border-0">
 								<td class="py-sm text-body-md text-ink">{item.prodotto}</td>
-								<td class="py-sm text-body-md text-shade-60">{item.quantità_prodotto}</td>
+								<td class="py-sm text-body-md text-shade-60">{item.quantita_prodotto}</td>
 								<td class="py-sm text-right">
 									<button on:click={() => handleDelete(item.$id!)} class="text-caption text-shade-50 hover:text-red-600">🗑️</button>
 								</td>

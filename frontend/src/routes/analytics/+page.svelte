@@ -26,14 +26,14 @@
 	});
 
 	// KPI
-	$: totaleVendite = vendite.reduce((s, v) => s + v.quantità_venduta, 0);
+	$: totaleVendite = vendite.reduce((s, v) => s + v.quantita_venduta, 0);
 	$: piattiUnici = new Set(vendite.map(v => v.piatto)).size;
-	$: prodottiCritici = prodotti.filter(p => p.quantità_attuale < p.soglia_riordino).length;
+	$: prodottiCritici = prodotti.filter(p => p.quantita_attuale < p.soglia_riordino).length;
 
 	// Top piatti
 	$: topPiatti = Object.entries(
 		vendite.reduce<Record<string, number>>((acc, v) => {
-			acc[v.piatto] = (acc[v.piatto] || 0) + v.quantità_venduta;
+			acc[v.piatto] = (acc[v.piatto] || 0) + v.quantita_venduta;
 			return acc;
 		}, {})
 	)
@@ -45,7 +45,7 @@
 		const ricetta = menu.filter(m => m.piatto === v.piatto);
 		return ricetta.map(r => ({
 			prodotto: r.prodotto,
-			quantità: v.quantità_venduta * r.quantità_prodotto
+			quantità: v.quantita_venduta * r.quantita_prodotto
 		}));
 	});
 
@@ -61,7 +61,7 @@
 	// Vendite per giorno (ultimi 14 giorni)
 	$: venditePerGiorno = Object.entries(
 		vendite.reduce<Record<string, number>>((acc, v) => {
-			acc[v.data] = (acc[v.data] || 0) + v.quantità_venduta;
+			acc[v.data] = (acc[v.data] || 0) + v.quantita_venduta;
 			return acc;
 		}, {})
 	)

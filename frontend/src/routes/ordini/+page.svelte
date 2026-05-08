@@ -91,8 +91,8 @@
 							{#each o.items as item}
 								<tr class="border-b border-hairline-light last:border-0">
 									<td class="py-sm text-body-md text-ink">{item.prodotto}</td>
-									<td class="py-sm text-body-md text-shade-60">{item.quantità_ordinata}</td>
-									<td class="py-sm text-body-md text-shade-60">{item.quantità_ricevuta}</td>
+									<td class="py-sm text-body-md text-shade-60">{item.quantita_ordinata}</td>
+									<td class="py-sm text-body-md text-shade-60">{item.quantita_ricevuta}</td>
 									<td class="py-sm">
 										{#if item.ricevuto}
 											<span class="pill-tag-mint">✓</span>

@@ -35,7 +35,7 @@
 		try {
 			await updateOrdineItem(item.$id!, {
 				ricevuto: !item.ricevuto,
-				quantità_ricevuta: !item.ricevuto ? item.quantità_ordinata : 0
+				quantita_ricevuta: !item.ricevuto ? item.quantita_ordinata : 0
 			});
 			await loadData();
 		} catch (e: any) {
@@ -50,7 +50,7 @@
 				const prodotto = prodotti.find(p => p.prodotto === item.prodotto);
 				if (prodotto?.$id) {
 					await updateProdotto(prodotto.$id, {
-						quantità_attuale: prodotto.quantità_attuale + (item.quantità_ricevuta || item.quantità_ordinata)
+						quantita_attuale: prodotto.quantita_attuale + (item.quantita_ricevuta || item.quantita_ordinata)
 					});
 				}
 			}
@@ -133,8 +133,8 @@
 					<div class="flex-1">
 						<div class="text-body-md text-ink font-medium">{item.prodotto}</div>
 						<div class="text-caption text-shade-50">
-							Ordinato: {item.quantità_ordinata}
-							{#if item.quantità_ricevuta > 0} · Ricevuto: {item.quantità_ricevuta}{/if}
+							Ordinato: {item.quantita_ordinata}
+							{#if item.quantita_ricevuta > 0} · Ricevuto: {item.quantita_ricevuta}{/if}
 						</div>
 					</div>
 					{#if item.ricevuto}

@@ -36,14 +36,14 @@ export async function calcolaConsumi(vendite: Vendita[], menu: MenuItem[]): Prom
 			if (!consumi[key]) {
 				consumi[key] = { data: v.data, quantità: 0 };
 			}
-			consumi[key].quantità += v.quantità_venduta * r.quantità_prodotto;
+			consumi[key].quantità += v.quantita_venduta * r.quantita_prodotto;
 		}
 	}
 
 	return Object.entries(consumi).map(([key, val]) => ({
 		data: val.data,
 		prodotto: key.split('_')[1],
-		quantità_consumata: val.quantità,
+		quantita_consumata: val.quantità,
 		fonte: 'vendita'
 	}));
 }

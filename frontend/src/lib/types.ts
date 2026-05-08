@@ -1,8 +1,8 @@
 export interface Prodotto {
 	$id?: string;
 	prodotto: string;
-	quantità_attuale: number;
-	unità: string;
+	quantita_attuale: number;
+	unita: string;
 	soglia_riordino: number;
 	fornitore?: string;
 	costo_unitario?: number;
@@ -13,7 +13,7 @@ export interface MenuItem {
 	$id?: string;
 	piatto: string;
 	prodotto: string;
-	quantità_prodotto: number;
+	quantita_prodotto: number;
 	porzione_default?: number;
 }
 
@@ -21,7 +21,7 @@ export interface Vendita {
 	$id?: string;
 	data: string;
 	piatto: string;
-	quantità_venduta: number;
+	quantita_venduta: number;
 	turno?: 'pranzo' | 'cena';
 }
 
@@ -37,8 +37,8 @@ export interface OrdineItem {
 	$id?: string;
 	ordine_id: string;
 	prodotto: string;
-	quantità_ordinata: number;
-	quantità_ricevuta: number;
+	quantita_ordinata: number;
+	quantita_ricevuta: number;
 	ricevuto: boolean;
 }
 
@@ -46,7 +46,7 @@ export interface Consumo {
 	$id?: string;
 	data: string;
 	prodotto: string;
-	quantità_consumata: number;
+	quantita_consumata: number;
 	fonte: string;
 }
 

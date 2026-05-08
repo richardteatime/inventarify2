@@ -63,7 +63,7 @@
 					<tr class="border-b border-hairline-light last:border-0 hover:bg-canvas-cream transition-colors">
 						<td class="px-md py-sm text-body-md text-shade-60">{v.data}</td>
 						<td class="px-md py-sm text-body-md text-ink font-medium">{v.piatto}</td>
-						<td class="px-md py-sm text-body-md text-ink">{v.quantità_venduta}</td>
+						<td class="px-md py-sm text-body-md text-ink">{v.quantita_venduta}</td>
 						<td class="px-md py-sm">
 							{#if v.turno}
 								<span class="pill-tag-shade">{v.turno}</span>

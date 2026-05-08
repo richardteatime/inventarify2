@@ -24,6 +24,6 @@ export async function deleteProdotto(id: string): Promise<void> {
 
 export async function updateQuantita(id: string, delta: number): Promise<Prodotto> {
 	const doc = await databases.getDocument(DB_ID, COLLECTIONS.PRODOTTI, id);
-	const nuova = (doc as any).quantità_attuale + delta;
-	return updateProdotto(id, { quantità_attuale: Math.max(0, nuova) });
+	const nuova = (doc as any).quantita_attuale + delta;
+	return updateProdotto(id, { quantita_attuale: Math.max(0, nuova) });
 }

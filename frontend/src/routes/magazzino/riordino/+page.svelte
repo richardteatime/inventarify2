@@ -13,7 +13,7 @@
 	onMount(async () => {
 		try {
 			const all = await listProdotti();
-			prodotti = all.filter(p => p.quantità_attuale < p.soglia_riordino);
+			prodotti = all.filter(p => p.quantita_attuale < p.soglia_riordino);
 		} catch (e) {
 			addToast('Errore caricamento', 'error');
 		} finally {
@@ -22,7 +22,7 @@
 	});
 
 	function quantitaSuggerita(p: Prodotto): number {
-		const diff = p.soglia_riordino - p.quantità_attuale;
+		const diff = p.soglia_riordino - p.quantita_attuale;
 		return Math.max(1, Math.ceil(diff));
 	}
 
@@ -40,8 +40,8 @@
 				await createOrdineItem({
 					ordine_id: ordine.$id!,
 					prodotto: p.prodotto,
-					quantità_ordinata: quantitaSuggerita(p),
-					quantità_ricevuta: 0,
+					quantita_ordinata: quantitaSuggerita(p),
+					quantita_ricevuta: 0,
 					ricevuto: false
 				});
 			}
@@ -113,9 +113,9 @@
 					{#each prodotti as p}
 						<tr class="border-b border-hairline-light last:border-0">
 							<td class="px-md py-sm text-body-md text-ink font-medium">{p.prodotto}</td>
-							<td class="px-md py-sm text-body-md text-red-600 font-medium">{p.quantità_attuale}</td>
+							<td class="px-md py-sm text-body-md text-red-600 font-medium">{p.quantita_attuale}</td>
 							<td class="px-md py-sm text-body-md text-shade-60">{p.soglia_riordino}</td>
-							<td class="px-md py-sm text-body-md text-shade-60">{p.unità}</td>
+							<td class="px-md py-sm text-body-md text-shade-60">{p.unita}</td>
 							<td class="px-md py-sm text-body-md text-ink font-medium">{quantitaSuggerita(p)}</td>
 						</tr>
 					{/each}

@@ -29,8 +29,8 @@
 		}
 	}
 
-	$: prodottiSottoSoglia = prodotti.filter(p => p.quantità_attuale < p.soglia_riordino);
-	$: totaleVendite = vendite.reduce((sum, v) => sum + v.quantità_venduta, 0);
+	$: prodottiSottoSoglia = prodotti.filter(p => p.quantita_attuale < p.soglia_riordino);
+	$: totaleVendite = vendite.reduce((sum, v) => sum + v.quantita_venduta, 0);
 	$: piattiUnici = new Set(vendite.map(v => v.piatto)).size;
 </script>
 
@@ -80,7 +80,7 @@
 				<div class="flex items-center justify-between bg-canvas-light rounded-md px-md py-sm border border-hairline-light">
 					<span class="text-body-md text-ink font-medium">{p.prodotto}</span>
 					<span class="text-caption text-shade-50">
-						{p.quantità_attuale} {p.unità} / soglia {p.soglia_riordino} {p.unità}
+						{p.quantita_attuale} {p.unita} / soglia {p.soglia_riordino} {p.unita}
 					</span>
 				</div>
 			{/each}

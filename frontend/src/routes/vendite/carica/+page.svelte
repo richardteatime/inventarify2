@@ -28,7 +28,7 @@
 			const headers = lines[0].split(',').map(h => h.trim());
 			
 			// Validate headers
-			const required = ['data', 'piatto', 'quantità_venduta'];
+			const required = ['data', 'piatto', 'quantita_venduta'];
 			const missing = required.filter(r => !headers.includes(r));
 			if (missing.length > 0) {
 				addToast(`Colonne mancanti: ${missing.join(', ')}`, 'error');
@@ -41,7 +41,7 @@
 				return {
 					data: cols[headers.indexOf('data')]?.trim() || '',
 					piatto: cols[headers.indexOf('piatto')]?.trim() || '',
-					quantità_venduta: parseInt(cols[headers.indexOf('quantità_venduta')]?.trim() || '0'),
+					quantita_venduta: parseInt(cols[headers.indexOf('quantita_venduta')]?.trim() || '0'),
 					turno: (cols[headers.indexOf('turno')]?.trim() as any) || undefined
 				};
 			}).filter(v => v.piatto && v.data);
@@ -58,7 +58,7 @@
 			await createVenditeBatch(preview.map(v => ({
 				data: v.data,
 				piatto: v.piatto,
-				quantità_venduta: v.quantità_venduta,
+				quantita_venduta: v.quantita_venduta,
 				turno: v.turno
 			})));
 
@@ -101,7 +101,7 @@
 		</div>
 		<h3 class="font-display text-heading-lg text-ink mb-sm">Trascina o seleziona un file CSV</h3>
 		<p class="text-body-md text-shade-50 mb-lg max-w-md mx-auto">
-			Il file deve contenere le colonne: <code class="bg-canvas-cream px-xs py-xxs rounded-xs text-caption">data, piatto, quantità_venduta</code>
+			Il file deve contenere le colonne: <code class="bg-canvas-cream px-xs py-xxs rounded-xs text-caption">data, piatto, quantita_venduta</code>
 		</p>
 		<label class="btn-primary-pill cursor-pointer inline-block">
 			<input type="file" accept=".csv" class="hidden" on:change={handleFile} />
@@ -128,7 +128,7 @@
 						<tr class="border-b border-hairline-light last:border-0">
 							<td class="px-md py-sm text-body-md">{v.data}</td>
 							<td class="px-md py-sm text-body-md">{v.piatto}</td>
-							<td class="px-md py-sm text-body-md">{v.quantità_venduta}</td>
+							<td class="px-md py-sm text-body-md">{v.quantita_venduta}</td>
 						</tr>
 					{/each}
 				</tbody>
