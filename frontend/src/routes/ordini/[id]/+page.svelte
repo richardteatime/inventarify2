@@ -14,6 +14,7 @@
 	let items: OrdineItem[] = [];
 	let prodotti: Prodotto[] = [];
 	let loading = true;
+	let actionLoading = false;
 
 	onMount(loadData);
 
@@ -44,31 +45,47 @@
 	}
 
 	async function aggiornaMagazzino() {
+		actionLoading = true;
 		try {
 			const ricevuti = items.filter(i => i.ricevuto);
+			let aggiornati = 0;
+			let nonTrovati = 0;
+
 			for (const item of ricevuti) {
 				const prodotto = prodotti.find(p => p.prodotto === item.prodotto);
 				if (prodotto?.$id) {
-					await updateProdotto(prodotto.$id, {
-						quantita_attuale: prodotto.quantita_attuale + (item.quantita_ricevuta || item.quantita_ordinata)
-					});
+					const nuovaQty = prodotto.quantita_attuale + (item.quantita_ricevuta || item.quantita_ordinata);
+					await updateProdotto(prodotto.$id, { quantita_attuale: nuovaQty });
+					aggiornati++;
+				} else {
+					nonTrovati++;
 				}
 			}
-			await updateOrdine(id, { stato: 'consegnato' });
-			addToast('Magazzino aggiornato con successo!', 'success');
+
+			if (nonTrovati > 0) {
+				addToast(`${nonTrovati} prodotti non trovati nel magazzino (nome cambiato?). Magazzino aggiornato parzialmente.`, 'error');
+			} else {
+				await updateOrdine(id, { stato: 'consegnato' });
+				addToast(`${aggiornati} prodotti aggiornati. Ordine completato.`, 'success');
+			}
 			await loadData();
 		} catch (e: any) {
 			addToast(e.message || 'Errore aggiornamento', 'error');
+		} finally {
+			actionLoading = false;
 		}
 	}
 
 	async function cambiaStato(nuovo: Ordine['stato']) {
+		actionLoading = true;
 		try {
 			await updateOrdine(id, { stato: nuovo });
 			await loadData();
 			addToast(`Stato aggiornato a: ${nuovo}`, 'success');
 		} catch (e: any) {
 			addToast(e.message || 'Errore', 'error');
+		} finally {
+			actionLoading = false;
 		}
 	}
 
@@ -103,12 +120,14 @@
 	<!-- Azioni stato -->
 	<div class="flex flex-wrap gap-sm mb-lg">
 		{#if ordine.stato === 'bozza'}
-			<button on:click={() => cambiaStato('inviato')} class="btn-primary-pill"> Segna come inviato</button>
+			<button on:click={() => cambiaStato('inviato')} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">Segna come inviato</button>
 		{:else if ordine.stato === 'inviato'}
-			<button on:click={() => cambiaStato('parziale')} class="btn-aloe-pill"> Ricezione parziale</button>
+			<button on:click={() => cambiaStato('parziale')} disabled={actionLoading} class="btn-aloe-pill disabled:opacity-50">Ricezione parziale</button>
 		{/if}
 		{#if ordine.stato !== 'consegnato' && ordine.stato !== 'bozza'}
-			<button on:click={aggiornaMagazzino} class="btn-primary-pill"> Aggiorna magazzino</button>
+			<button on:click={aggiornaMagazzino} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">
+				{actionLoading ? 'Aggiornamento...' : 'Aggiorna magazzino'}
+			</button>
 		{/if}
 		{#if ordine.stato === 'consegnato'}
 			<span class="pill-tag-mint">Ordine completato</span>
@@ -117,7 +136,7 @@
 
 	<!-- Checklist -->
 	<div class="card-pricing shadow-level-3">
-		<h3 class="font-display text-heading-md text-ink mb-lg"> Checklist Ricezione</h3>
+		<h3 class="font-display text-heading-md text-ink mb-lg">Checklist Ricezione</h3>
 		<div class="space-y-sm">
 			{#each items as item}
 				<div class="flex items-center gap-md p-md rounded-md border border-hairline-light transition-colors"

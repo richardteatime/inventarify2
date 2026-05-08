@@ -1,14 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { listMenu, listPiatti, createMenuItem, deleteMenuItem, getRicetta } from '$lib/database/menu';
+	import { listMenu, listPiatti, createMenuItem, deleteMenuItem } from '$lib/database/menu';
 	import { addToast } from '$lib/stores/toast';
+	import ConfirmModal from '$lib/components/ui/ConfirmModal.svelte';
 	import type { MenuItem } from '$lib/types';
 
 	let menu: MenuItem[] = [];
 	let piatti: string[] = [];
 	let loading = true;
+	let actionLoading = false;
 	let selectedPiatto = '';
 	let showForm = false;
+	let formErrors: Record<string, string> = {};
+
+	let deleteModalOpen = false;
+	let deleteTargetId: string | null = null;
 
 	let newItem: Omit<MenuItem, '$id'> = {
 		piatto: '',
@@ -29,7 +35,23 @@
 		}
 	}
 
+	function validateItem(data: Partial<MenuItem>): boolean {
+		formErrors = {};
+		if (!data.piatto || data.piatto.trim().length < 2) {
+			formErrors.piatto = 'Nome piatto obbligatorio (min 2 caratteri)';
+		}
+		if (!data.prodotto || data.prodotto.trim().length < 2) {
+			formErrors.prodotto = 'Nome prodotto obbligatorio (min 2 caratteri)';
+		}
+		if (data.quantita_prodotto === undefined || data.quantita_prodotto <= 0) {
+			formErrors.quantita_prodotto = 'Quantità deve essere maggiore di 0';
+		}
+		return Object.keys(formErrors).length === 0;
+	}
+
 	async function handleCreate() {
+		if (!validateItem(newItem)) return;
+		actionLoading = true;
 		try {
 			await createMenuItem(newItem);
 			addToast('Ingrediente aggiunto alla ricetta', 'success');
@@ -37,17 +59,28 @@
 			await loadData();
 		} catch (e: any) {
 			addToast(e.message || 'Errore', 'error');
+		} finally {
+			actionLoading = false;
 		}
 	}
 
-	async function handleDelete(id: string) {
-		if (!confirm('Rimuovere questo ingrediente?')) return;
+	function requestDelete(id: string) {
+		deleteTargetId = id;
+		deleteModalOpen = true;
+	}
+
+	async function confirmDelete() {
+		if (!deleteTargetId) return;
+		actionLoading = true;
 		try {
-			await deleteMenuItem(id);
+			await deleteMenuItem(deleteTargetId);
 			await loadData();
 			addToast('Ingrediente rimosso', 'success');
 		} catch (e: any) {
 			addToast(e.message || 'Errore', 'error');
+		} finally {
+			actionLoading = false;
+			deleteTargetId = null;
 		}
 	}
 
@@ -64,8 +97,19 @@
 	<title>Menu — Inventarify</title>
 </svelte:head>
 
+<ConfirmModal
+	open={deleteModalOpen}
+	title="Rimuovi ingrediente"
+	message="Rimuovere questo ingrediente dalla ricetta?"
+	confirmText="Rimuovi"
+	cancelText="Annulla"
+	danger={true}
+	on:confirm={confirmDelete}
+	on:cancel={() => deleteModalOpen = false}
+/>
+
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm"> Menu / Ricette</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm">Menu / Ricette</h1>
 	<p class="text-body-md text-shade-50">Associa piatti e ingredienti per il calcolo automatico consumi</p>
 </div>
 
@@ -86,28 +130,33 @@
 		<h3 class="font-display text-heading-md text-ink mb-lg">Nuovo ingrediente</h3>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-md">
 			<div>
-				<label class="text-caption text-shade-50 block mb-xs">Piatto</label>
+				<label class="text-caption text-shade-50 block mb-xs">Piatto *</label>
 				<input bind:value={newItem.piatto} list="piatti-list" class="input-text" placeholder="Nome piatto" />
 				<datalist id="piatti-list">
 					{#each piatti as p}
 						<option>{p}</option>
 					{/each}
 				</datalist>
+				{#if formErrors.piatto}<span class="text-caption text-red-600 mt-xs">{formErrors.piatto}</span>{/if}
 			</div>
 			<div>
-				<label class="text-caption text-shade-50 block mb-xs">Prodotto</label>
+				<label class="text-caption text-shade-50 block mb-xs">Prodotto *</label>
 				<input bind:value={newItem.prodotto} class="input-text" placeholder="es. Pomodori" />
+				{#if formErrors.prodotto}<span class="text-caption text-red-600 mt-xs">{formErrors.prodotto}</span>{/if}
 			</div>
 			<div>
-				<label class="text-caption text-shade-50 block mb-xs">Quantità / porzione</label>
-				<input type="number" step="0.001" bind:value={newItem.quantita_prodotto} class="input-text" />
+				<label class="text-caption text-shade-50 block mb-xs">Quantità / porzione *</label>
+				<input type="number" step="0.001" min="0.001" bind:value={newItem.quantita_prodotto} class="input-text" />
+				{#if formErrors.quantita_prodotto}<span class="text-caption text-red-600 mt-xs">{formErrors.quantita_prodotto}</span>{/if}
 			</div>
 			<div>
 				<label class="text-caption text-shade-50 block mb-xs">Unità</label>
 				<input bind:value={newItem.porzione_default} class="input-text" placeholder="1" />
 			</div>
 		</div>
-		<button on:click={handleCreate} class="btn-primary-pill mt-lg">Salva ingrediente</button>
+		<button on:click={handleCreate} disabled={actionLoading} class="btn-primary-pill mt-lg disabled:opacity-50">
+			{actionLoading ? 'Salvataggio...' : 'Salva ingrediente'}
+		</button>
 	</div>
 {/if}
 
@@ -135,7 +184,7 @@
 								<td class="py-sm text-body-md text-ink">{item.prodotto}</td>
 								<td class="py-sm text-body-md text-shade-60">{item.quantita_prodotto}</td>
 								<td class="py-sm text-right">
-									<button on:click={() => handleDelete(item.$id!)} class="text-caption text-shade-50 hover:text-red-600"></button>
+									<button on:click={() => requestDelete(item.$id!)} class="text-caption text-red-500 hover:text-red-700 font-medium">Elimina</button>
 								</td>
 							</tr>
 						{/each}
