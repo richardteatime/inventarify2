@@ -54,7 +54,7 @@
 	<p class="text-body-md text-shade-50">Gestisci ordini a fornitori e ricezione merce</p>
 </div>
 
-{#if canEdit()}
+{#if $canEdit}
 	<div class="mb-lg">
 		<a href="/magazzino/riordino" class="btn-primary-pill text-no-underline">+ Nuovo ordine da riordino</a>
 	</div>
@@ -121,7 +121,7 @@
 			<div class="card-pricing shadow-level-3 text-center py-xxl">
 				<h3 class="font-display text-heading-lg text-ink mb-sm">Nessun ordine</h3>
 				<p class="text-body-md text-shade-50 mb-lg">Crea il tuo primo ordine dalla pagina riordino</p>
-				{#if canEdit()}
+				{#if $canEdit}
 					<a href="/magazzino/riordino" class="btn-primary-pill text-no-underline">Vai a riordino</a>
 				{/if}
 			</div>

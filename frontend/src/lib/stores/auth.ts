@@ -1,4 +1,4 @@
-import { writable, get } from 'svelte/store';
+import { writable, get, derived } from 'svelte/store';
 import { account, databases, DB_ID, COLLECTIONS, Query } from '$lib/appwrite';
 import type { Models } from 'appwrite';
 
@@ -39,19 +39,15 @@ async function loadUserRole(userId: string) {
 	}
 }
 
-export function hasRole(required: UserRole[]): boolean {
-	const current = get(userRole);
-	if (!current) return false;
-	return required.includes(current);
-}
+/** Derived store: true if user is admin or manager */
+export const canEdit = derived(userRole, ($r) =>
+	$r === 'admin' || $r === 'manager'
+);
 
-export function canEdit(): boolean {
-	return hasRole(['admin', 'manager']);
-}
-
-export function canDelete(): boolean {
-	return hasRole(['admin']);
-}
+/** Derived store: true if user is admin */
+export const canDelete = derived(userRole, ($r) =>
+	$r === 'admin'
+);
 
 export async function login(email: string, password: string) {
 	const session = await account.createEmailPasswordSession(email, password);

@@ -167,7 +167,7 @@
 		<a href="/magazzino/riordino" class="btn-aloe-pill text-no-underline">
 			Prodotti sotto soglia ({sottoSoglia.length})
 		</a>
-		{#if canEdit()}
+		{#if $canEdit}
 			<button on:click={() => showForm = !showForm} class="btn-primary-pill">
 				{showForm ? 'Annulla' : '+ Nuovo prodotto'}
 			</button>
@@ -176,7 +176,7 @@
 </div>
 
 <!-- Form nuovo prodotto -->
-{#if showForm && canEdit()}
+{#if showForm && $canEdit}
 	<div class="card-pricing shadow-level-3 mb-lg">
 		<h3 class="font-display text-heading-md text-ink mb-lg">Nuovo prodotto</h3>
 		<div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
@@ -267,10 +267,10 @@
 								<button on:click={() => handleSaveEdit(p.$id!)} disabled={actionLoading} class="text-caption text-aloe-10 hover:text-ink mr-sm font-medium">Salva</button>
 								<button on:click={cancelEdit} class="text-caption text-shade-50 hover:text-ink font-medium">Annulla</button>
 							{:else}
-								{#if canEdit()}
+								{#if $canEdit}
 									<button on:click={() => startEdit(p)} class="text-caption text-shade-50 hover:text-ink mr-sm font-medium">Modifica</button>
 								{/if}
-								{#if canDelete()}
+								{#if $canDelete}
 									<button on:click={() => requestDelete(p.$id!)} class="text-caption text-red-500 hover:text-red-700 font-medium">Elimina</button>
 								{/if}
 							{/if}

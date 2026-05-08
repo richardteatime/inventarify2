@@ -98,7 +98,8 @@
 			addToast(`${preview.length} vendite caricate, ${consumi.length} consumi calcolati, stock aggiornato`, 'success');
 			step = 'done';
 		} catch (e: any) {
-			addToast(e.message || 'Errore caricamento', 'error');
+			console.error('Errore caricamento vendite:', e);
+			addToast(e.message || `Errore caricamento: ${JSON.stringify(e)}`, 'error');
 		} finally {
 			loading = false;
 		}

@@ -133,7 +133,7 @@
 	</div>
 
 	<!-- Azioni stato -->
-	{#if canEdit()}
+	{#if $canEdit}
 		<div class="flex flex-wrap gap-sm mb-lg">
 			{#if ordine.stato === 'bozza'}
 				<button on:click={() => cambiaStato('inviato')} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">Segna come inviato</button>
@@ -166,7 +166,7 @@
 						type="checkbox"
 						checked={item.ricevuto}
 						on:change={() => toggleRicevuto(item)}
-						disabled={!canEdit()}
+						disabled={!$canEdit}
 						class="w-5 h-5 accent-ink cursor-pointer disabled:opacity-50"
 					/>
 					<div class="flex-1">

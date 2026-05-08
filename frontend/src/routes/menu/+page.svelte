@@ -142,14 +142,14 @@
 			<option>{p}</option>
 		{/each}
 	</select>
-	{#if canEdit()}
+	{#if $canEdit}
 		<button on:click={() => showForm = !showForm} class="btn-primary-pill">
 			{showForm ? 'Annulla' : '+ Aggiungi ingrediente'}
 		</button>
 	{/if}
 </div>
 
-{#if showForm && canEdit()}
+{#if showForm && $canEdit}
 	<div class="card-pricing shadow-level-3 mb-lg">
 		<h3 class="font-display text-heading-md text-ink mb-lg">Nuovo ingrediente</h3>
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-md">
@@ -204,7 +204,7 @@
 						<tr>
 							<th class="text-left text-caption text-shade-50 py-sm font-medium">Prodotto</th>
 							<th class="text-left text-caption text-shade-50 py-sm font-medium">Quantità / porzione</th>
-							{#if canEdit()}
+							{#if $canEdit}
 								<th class="text-right text-caption text-shade-50 py-sm font-medium"></th>
 							{/if}
 						</tr>
@@ -214,7 +214,7 @@
 							<tr class="border-b border-hairline-light last:border-0">
 								<td class="py-sm text-body-md text-ink">{item.prodotto}</td>
 								<td class="py-sm text-body-md text-shade-60">{item.quantita_prodotto}</td>
-								{#if canEdit()}
+								{#if $canEdit}
 									<td class="py-sm text-right">
 										<button on:click={() => requestDelete(item.$id!)} class="text-caption text-red-500 hover:text-red-700 font-medium">Elimina</button>
 									</td>

@@ -66,7 +66,7 @@
 
 <div class="flex flex-col sm:flex-row gap-sm mb-lg justify-between items-start sm:items-center">
 	<a href="/vendite/carica" class="btn-primary-pill text-no-underline">Carica nuove vendite</a>
-	{#if canDelete()}
+	{#if $canDelete}
 		<button on:click={() => resetModalOpen = true} disabled={actionLoading} class="btn-outline-on-light disabled:opacity-50">
 			Reset tutte le vendite
 		</button>

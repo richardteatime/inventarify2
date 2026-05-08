@@ -142,7 +142,7 @@
 				placeholder="Fornitore (opzionale)"
 				class="input-text max-w-xs"
 			/>
-			{#if canEdit()}
+			{#if $canEdit}
 				<button on:click={generaOrdine} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">
 					{actionLoading ? 'Generazione...' : 'Genera ordine in app'}
 				</button>
