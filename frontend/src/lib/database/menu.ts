@@ -3,7 +3,8 @@ import type { MenuItem } from '$lib/types';
 
 export async function listMenu(): Promise<MenuItem[]> {
 	const res = await databases.listDocuments(DB_ID, COLLECTIONS.MENU, [
-		Query.orderAsc('piatto')
+		Query.orderAsc('piatto'),
+		Query.limit(500)
 	]);
 	return res.documents as unknown as MenuItem[];
 }

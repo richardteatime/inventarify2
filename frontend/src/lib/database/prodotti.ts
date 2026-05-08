@@ -3,7 +3,8 @@ import type { Prodotto } from '$lib/types';
 
 export async function listProdotti(): Promise<Prodotto[]> {
 	const res = await databases.listDocuments(DB_ID, COLLECTIONS.PRODOTTI, [
-		Query.orderAsc('prodotto')
+		Query.orderAsc('prodotto'),
+		Query.limit(500)
 	]);
 	return res.documents as unknown as Prodotto[];
 }

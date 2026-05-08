@@ -3,7 +3,8 @@ import type { Ordine, OrdineItem } from '$lib/types';
 
 export async function listOrdini(): Promise<Ordine[]> {
 	const res = await databases.listDocuments(DB_ID, COLLECTIONS.ORDINI, [
-		Query.orderDesc('data_ordine')
+		Query.orderDesc('data_ordine'),
+		Query.limit(500)
 	]);
 	return res.documents as unknown as Ordine[];
 }
@@ -25,7 +26,8 @@ export async function updateOrdine(id: string, data: Partial<Ordine>): Promise<O
 
 export async function listOrdineItems(ordineId: string): Promise<OrdineItem[]> {
 	const res = await databases.listDocuments(DB_ID, COLLECTIONS.ORDINI_ITEMS, [
-		Query.equal('ordine_id', ordineId)
+		Query.equal('ordine_id', ordineId),
+		Query.limit(500)
 	]);
 	return res.documents as unknown as OrdineItem[];
 }
