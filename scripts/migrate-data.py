@@ -51,10 +51,13 @@ def read_csv(filename):
         return list(csv.DictReader(f))
 
 
+PERMISSIONS = ['read("users")', 'update("users")', 'delete("users")']
+
 def create_doc(collection, data):
     r = api_post(f"/databases/{DB_ID}/collections/{collection}/documents", {
         "documentId": "unique()",
         "data": data,
+        "permissions": PERMISSIONS,
     })
     return r.status_code in (201, 200)
 

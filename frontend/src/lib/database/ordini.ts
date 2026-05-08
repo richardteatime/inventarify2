@@ -1,4 +1,4 @@
-import { databases, DB_ID, COLLECTIONS, ID, Query } from '$lib/appwrite';
+import { databases, DB_ID, COLLECTIONS, ID, Query, DEFAULT_PERMISSIONS } from '$lib/appwrite';
 import type { Ordine, OrdineItem } from '$lib/types';
 
 export async function listOrdini(): Promise<Ordine[]> {
@@ -14,7 +14,7 @@ export async function getOrdine(id: string): Promise<Ordine> {
 }
 
 export async function createOrdine(data: Omit<Ordine, '$id'>): Promise<Ordine> {
-	const res = await databases.createDocument(DB_ID, COLLECTIONS.ORDINI, ID.unique(), data);
+	const res = await databases.createDocument(DB_ID, COLLECTIONS.ORDINI, ID.unique(), data, DEFAULT_PERMISSIONS);
 	return res as unknown as Ordine;
 }
 
@@ -31,7 +31,7 @@ export async function listOrdineItems(ordineId: string): Promise<OrdineItem[]> {
 }
 
 export async function createOrdineItem(data: Omit<OrdineItem, '$id'>): Promise<OrdineItem> {
-	const res = await databases.createDocument(DB_ID, COLLECTIONS.ORDINI_ITEMS, ID.unique(), data);
+	const res = await databases.createDocument(DB_ID, COLLECTIONS.ORDINI_ITEMS, ID.unique(), data, DEFAULT_PERMISSIONS);
 	return res as unknown as OrdineItem;
 }
 

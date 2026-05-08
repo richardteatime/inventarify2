@@ -1,4 +1,4 @@
-import { databases, DB_ID, COLLECTIONS, ID, Query } from '$lib/appwrite';
+import { databases, DB_ID, COLLECTIONS, ID, Query, DEFAULT_PERMISSIONS } from '$lib/appwrite';
 import type { Vendita, MenuItem, Consumo } from '$lib/types';
 
 export async function listVendite(limit = 100): Promise<Vendita[]> {
@@ -10,12 +10,11 @@ export async function listVendite(limit = 100): Promise<Vendita[]> {
 }
 
 export async function createVendita(data: Omit<Vendita, '$id'>): Promise<Vendita> {
-	const res = await databases.createDocument(DB_ID, COLLECTIONS.VENDITE, ID.unique(), data);
+	const res = await databases.createDocument(DB_ID, COLLECTIONS.VENDITE, ID.unique(), data, DEFAULT_PERMISSIONS);
 	return res as unknown as Vendita;
 }
 
 export async function createVenditeBatch(items: Omit<Vendita, '$id'>[]): Promise<void> {
-	// Appwrite non ha batch insert nativo, facciamo Promise.all
 	await Promise.all(items.map(item => createVendita(item)));
 }
 
@@ -27,23 +26,23 @@ export async function deleteAllVendite(): Promise<void> {
 }
 
 export async function calcolaConsumi(vendite: Vendita[], menu: MenuItem[]): Promise<Consumo[]> {
-	const consumi: Record<string, { data: string; quantità: number }> = {};
+	const consumi: Record<string, { data: string; quantita: number }> = {};
 
 	for (const v of vendite) {
 		const ricetta = menu.filter(m => m.piatto === v.piatto);
 		for (const r of ricetta) {
 			const key = `${v.data}_${r.prodotto}`;
 			if (!consumi[key]) {
-				consumi[key] = { data: v.data, quantità: 0 };
+				consumi[key] = { data: v.data, quantita: 0 };
 			}
-			consumi[key].quantità += v.quantita_venduta * r.quantita_prodotto;
+			consumi[key].quantita += v.quantita_venduta * r.quantita_prodotto;
 		}
 	}
 
 	return Object.entries(consumi).map(([key, val]) => ({
 		data: val.data,
 		prodotto: key.split('_')[1],
-		quantita_consumata: val.quantità,
+		quantita_consumata: val.quantita,
 		fonte: 'vendita'
 	}));
 }

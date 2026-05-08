@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Storage, ID, Query } from 'appwrite';
+import { Client, Account, Databases, Storage, ID, Query, Permission, Role } from 'appwrite';
 import { PUBLIC_APPWRITE_ENDPOINT, PUBLIC_APPWRITE_PROJECT, PUBLIC_APPWRITE_DATABASE_ID } from '$env/static/public';
 
 export const client = new Client()
@@ -9,7 +9,7 @@ export const account = new Account(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
 
-export { ID, Query };
+export { ID, Query, Permission, Role };
 
 // Collection IDs
 export const DB_ID = PUBLIC_APPWRITE_DATABASE_ID;
@@ -29,3 +29,10 @@ export const BUCKETS = {
 	VENDITE_CSV: 'vendite-csv',
 	ORDINI_CSV: 'ordini-csv'
 } as const;
+
+// Default permissions for shared data
+export const DEFAULT_PERMISSIONS = [
+	Permission.read(Role.users()),
+	Permission.update(Role.users()),
+	Permission.delete(Role.users())
+];

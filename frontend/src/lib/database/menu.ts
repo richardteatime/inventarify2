@@ -1,4 +1,4 @@
-import { databases, DB_ID, COLLECTIONS, ID, Query } from '$lib/appwrite';
+import { databases, DB_ID, COLLECTIONS, ID, Query, DEFAULT_PERMISSIONS } from '$lib/appwrite';
 import type { MenuItem } from '$lib/types';
 
 export async function listMenu(): Promise<MenuItem[]> {
@@ -21,7 +21,7 @@ export async function getRicetta(piatto: string): Promise<MenuItem[]> {
 }
 
 export async function createMenuItem(data: Omit<MenuItem, '$id'>): Promise<MenuItem> {
-	const res = await databases.createDocument(DB_ID, COLLECTIONS.MENU, ID.unique(), data);
+	const res = await databases.createDocument(DB_ID, COLLECTIONS.MENU, ID.unique(), data, DEFAULT_PERMISSIONS);
 	return res as unknown as MenuItem;
 }
 
