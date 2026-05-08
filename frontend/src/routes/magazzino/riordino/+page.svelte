@@ -40,6 +40,7 @@
 				await createOrdineItem({
 					ordine_id: ordine.$id!,
 					prodotto: p.prodotto,
+					prodotto_id: p.$id,
 					quantita_ordinata: quantitaSuggerita(p),
 					quantita_ricevuta: 0,
 					ricevuto: false

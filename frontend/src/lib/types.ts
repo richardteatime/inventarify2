@@ -13,6 +13,7 @@ export interface MenuItem {
 	$id?: string;
 	piatto: string;
 	prodotto: string;
+	prodotto_id?: string;
 	quantita_prodotto: number;
 	porzione_default?: number;
 }
@@ -37,6 +38,7 @@ export interface OrdineItem {
 	$id?: string;
 	ordine_id: string;
 	prodotto: string;
+	prodotto_id?: string;
 	quantita_ordinata: number;
 	quantita_ricevuta: number;
 	ricevuto: boolean;
@@ -46,6 +48,7 @@ export interface Consumo {
 	$id?: string;
 	data: string;
 	prodotto: string;
+	prodotto_id?: string;
 	quantita_consumata: number;
 	fonte: string;
 }

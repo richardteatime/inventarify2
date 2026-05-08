@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { listMenu, listPiatti, createMenuItem, deleteMenuItem } from '$lib/database/menu';
+	import { listProdotti } from '$lib/database/prodotti';
 	import { addToast } from '$lib/stores/toast';
 	import ConfirmModal from '$lib/components/ui/ConfirmModal.svelte';
-	import type { MenuItem } from '$lib/types';
+	import type { MenuItem, Prodotto } from '$lib/types';
 
 	let menu: MenuItem[] = [];
 	let piatti: string[] = [];
+	let prodotti: Prodotto[] = [];
 	let loading = true;
 	let actionLoading = false;
 	let selectedPiatto = '';
@@ -19,6 +21,7 @@
 	let newItem: Omit<MenuItem, '$id'> = {
 		piatto: '',
 		prodotto: '',
+		prodotto_id: '',
 		quantita_prodotto: 0,
 		porzione_default: 1
 	};
@@ -27,7 +30,11 @@
 
 	async function loadData() {
 		try {
-			[menu, piatti] = await Promise.all([listMenu(), listPiatti()]);
+			[menu, piatti, prodotti] = await Promise.all([
+				listMenu(),
+				listPiatti(),
+				listProdotti()
+			]);
 		} catch (e) {
 			addToast('Errore caricamento menu', 'error');
 		} finally {
@@ -40,13 +47,21 @@
 		if (!data.piatto || data.piatto.trim().length < 2) {
 			formErrors.piatto = 'Nome piatto obbligatorio (min 2 caratteri)';
 		}
-		if (!data.prodotto || data.prodotto.trim().length < 2) {
-			formErrors.prodotto = 'Nome prodotto obbligatorio (min 2 caratteri)';
+		if (!data.prodotto_id) {
+			formErrors.prodotto_id = 'Seleziona un prodotto';
 		}
 		if (data.quantita_prodotto === undefined || data.quantita_prodotto <= 0) {
 			formErrors.quantita_prodotto = 'Quantità deve essere maggiore di 0';
 		}
 		return Object.keys(formErrors).length === 0;
+	}
+
+	function onSelectProdotto(e: Event) {
+		const select = e.target as HTMLSelectElement;
+		const pid = select.value;
+		const p = prodotti.find(x => x.$id === pid);
+		newItem.prodotto_id = pid;
+		newItem.prodotto = p ? p.prodotto : '';
 	}
 
 	async function handleCreate() {
@@ -55,7 +70,7 @@
 		try {
 			await createMenuItem(newItem);
 			addToast('Ingrediente aggiunto alla ricetta', 'success');
-			newItem = { piatto: newItem.piatto, prodotto: '', quantita_prodotto: 0, porzione_default: 1 };
+			newItem = { piatto: newItem.piatto, prodotto: '', prodotto_id: '', quantita_prodotto: 0, porzione_default: 1 };
 			await loadData();
 		} catch (e: any) {
 			addToast(e.message || 'Errore', 'error');
@@ -141,8 +156,13 @@
 			</div>
 			<div>
 				<label class="text-caption text-shade-50 block mb-xs">Prodotto *</label>
-				<input bind:value={newItem.prodotto} class="input-text" placeholder="es. Pomodori" />
-				{#if formErrors.prodotto}<span class="text-caption text-red-600 mt-xs">{formErrors.prodotto}</span>{/if}
+				<select on:change={onSelectProdotto} class="input-text" value={newItem.prodotto_id}>
+					<option value="">Seleziona prodotto</option>
+					{#each prodotti as p}
+						<option value={p.$id}>{p.prodotto} ({p.unita})</option>
+					{/each}
+				</select>
+				{#if formErrors.prodotto_id}<span class="text-caption text-red-600 mt-xs">{formErrors.prodotto_id}</span>{/if}
 			</div>
 			<div>
 				<label class="text-caption text-shade-50 block mb-xs">Quantità / porzione *</label>

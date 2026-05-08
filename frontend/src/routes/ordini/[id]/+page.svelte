@@ -52,7 +52,12 @@
 			let nonTrovati = 0;
 
 			for (const item of ricevuti) {
-				const prodotto = prodotti.find(p => p.prodotto === item.prodotto);
+				let prodotto = item.prodotto_id
+					? prodotti.find(p => p.$id === item.prodotto_id)
+					: undefined;
+				if (!prodotto && item.prodotto) {
+					prodotto = prodotti.find(p => p.prodotto === item.prodotto);
+				}
 				if (prodotto?.$id) {
 					const nuovaQty = prodotto.quantita_attuale + (item.quantita_ricevuta || item.quantita_ordinata);
 					await updateProdotto(prodotto.$id, { quantita_attuale: nuovaQty });

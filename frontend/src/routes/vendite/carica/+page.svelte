@@ -5,7 +5,7 @@
 	import { listProdotti, updateProdotto } from '$lib/database/prodotti';
 	import { databases, DB_ID, COLLECTIONS, ID } from '$lib/appwrite';
 	import { addToast } from '$lib/stores/toast';
-	import type { Vendita, MenuItem } from '$lib/types';
+	import type { Vendita, MenuItem, Prodotto } from '$lib/types';
 	import Papa from 'papaparse';
 
 	let file: File | null = null;
@@ -75,21 +75,23 @@
 
 			// 2. Calculate consumi
 			const menu = await listMenu();
-			const consumi = await calcolaConsumi(preview, menu);
+			const prodotti = await listProdotti();
+			const consumi = await calcolaConsumi(preview, menu, prodotti);
 
 			// 3. Save consumi + update stock
-			const prodotti = await listProdotti();
-			const prodottiMap = new Map(prodotti.map(p => [p.prodotto, p]));
+			const prodottiMapById = new Map(prodotti.map(p => [p.$id!, p]));
 
 			for (const c of consumi) {
 				// Save consumo
 				await databases.createDocument(DB_ID, COLLECTIONS.CONSUMI, ID.unique(), c);
 
-				// Update stock
-				const prodotto = prodottiMap.get(c.prodotto);
-				if (prodotto?.$id) {
-					const nuovaQty = Math.max(0, prodotto.quantita_attuale - c.quantita_consumata);
-					await updateProdotto(prodotto.$id, { quantita_attuale: nuovaQty });
+				// Update stock by prodotto_id
+				if (c.prodotto_id) {
+					const prodotto = prodottiMapById.get(c.prodotto_id);
+					if (prodotto) {
+						const nuovaQty = Math.max(0, prodotto.quantita_attuale - c.quantita_consumata);
+						await updateProdotto(prodotto.$id!, { quantita_attuale: nuovaQty });
+					}
 				}
 			}
 
