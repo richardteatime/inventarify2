@@ -1,80 +1,135 @@
-# inventarify2
-# 🧠 Sistema Intelligente di Gestione Magazzino
+# 🧠 Inventarify — Sistema Intelligente di Gestione Magazzino
 
-Questo progetto è un'applicazione interattiva basata su **Streamlit** per la gestione automatizzata del magazzino di un ristorante.  
-Il sistema combina vendite, ricette e scorte per generare analisi, suggerire riordini e mantenere l'inventario sempre aggiornato.
+Applicazione di gestione magazzino per ristoranti. **MVP** in Streamlit → **v2** in SvelteKit + Appwrite.
 
 ---
 
-## 🚀 Funzionalità principali
+## 🏗️ Architettura
 
-- 📤 Caricamento vendite giornaliere da file CSV
-- 🍽️ Associazione piatti → ricette → ingredienti
-- 📦 Visualizzazione magazzino con quantità aggiornate
-- ⚠️ Avvisi automatici su prodotti sotto scorta
-- 📥 Download CSV dei prodotti da riordinare
-- 📋 Checklist interattiva per aggiornare l'inventario dopo la ricezione merce
-- 📊 Dashboard analitica su vendite e consumi
+| Livello | Tecnologia | Host |
+|---------|-----------|------|
+| **Frontend** | SvelteKit + Tailwind + TypeScript | Coolify (Hetzner) |
+| **Backend** | Appwrite (Auth, DB, Storage) | Coolify (Hetzner) |
+| **Deploy** | Docker container | Coolify |
 
 ---
 
-## 🔁 Flusso Operativo
+## 📁 Struttura progetto
 
-1. **Inizializzazione Database**
-   - Carica `menu.csv` (ricette) e `prodotti_magazzino.csv` (scorte)
-2. **Vendite**
-   - Carica `vendite.csv` → il sistema calcola automaticamente il consumo ingredienti
-3. **Controllo Magazzino**
-   - Confronta quantità residue e soglia riordino
-   - Scarica `prodotti_da_riordinare.csv`
-4. **Ordini & Ricezione**
-   - Carica `ordini.csv` → usa la checklist per aggiornare lo stock
-   - Magazzino aggiornato automaticamente
-
----
-
-## 🧾 Formato file richiesti
-
-| Nome file                | Campi richiesti                                      |
-|--------------------------|------------------------------------------------------|
-| `menu.csv`               | `piatto`, `prodotto`, `quantità_prodotto`           |
-| `prodotti_magazzino.csv` | `prodotto`, `quantità_attuale`, `unità`, `soglia_riordino` |
-| `vendite.csv`            | `data`, `piatto`, `quantità_venduta`                |
-| `ordini.csv`             | `prodotto`, `quantità`                               |
+```
+├── frontend/          ← Nuova app v2 (SvelteKit)
+│   ├── Dockerfile
+│   ├── src/
+│   └── ...
+├── scripts/           ← Setup Appwrite + migrazione dati
+│   ├── setup-appwrite.py
+│   └── migrate-data.py
+├── app.py             ← MVP Streamlit (legacy)
+├── *.csv              ← Dati MVP (legacy)
+└── DESIGN.md          ← Design system
+```
 
 ---
 
-## 📊 Interfaccia
+## 🚀 Deploy su Coolify (Step-by-step)
 
-- **Home**: guida introduttiva e flusso sistema
-- **Analytics**: report vendite, consumo ingredienti, prodotti sotto soglia
-- **Prodotti Magazzino**: upload inventario, quantità aggiornate, download CSV
-- **Menu**: visualizza o aggiorna le ricette
-- **Vendite**: storico vendite + reset dati
-- **Ordini**: checklist interattiva per aggiornare stock
+### 1. Configura Appwrite (già su Coolify)
 
----
+Vai sulla console Appwrite del tuo server:
 
-## 🛠️ Tecnologie utilizzate
+```
+Project Settings → Platforms → Add Platform → Web App
+  Name: Inventarify
+  Hostname: inventarify.tuo-dominio.it   (o il tuo dominio)
+```
 
-- [Streamlit](https://streamlit.io/)
-- [SQLite + DuckDB](https://duckdb.org/)
-- [Pandas](https://pandas.pydata.org/)
-- [Altair](https://altair-viz.github.io/)
+**Project Settings → Security → CORS**: aggiungi il tuo dominio di produzione.
 
----
-
-## 📸 Immagini
-
-### Flusso Logico
-![Schema funzionale](img/flowchart.png)
-
-> Inserisci l'immagine nella cartella `img/` del repository GitHub.
-
----
-
-## ✅ Esecuzione locale
+### 2. Setup collections e dati
 
 ```bash
-pip install -r requirements.txt
-streamlit run app.py
+# Installa SDK Python
+pip install appwrite
+
+# Configura credenziali
+export APPWRITE_ENDPOINT=https://appwrite.tuodominio.it/v1
+export APPWRITE_PROJECT=tuo-project-id
+export APPWRITE_API_KEY=tua-api-key
+
+# Crea database, collections, buckets
+python scripts/setup-appwrite.py
+
+# Migra dati CSV del MVP
+python scripts/migrate-data.py
+```
+
+### 3. Deploy frontend su Coolify
+
+Su Coolify:
+
+1. **Add Resource** → **Dockerfile**
+2. Seleziona il repository GitHub `richardteatime/inventarify2`
+3. **Base Directory**: `frontend/`
+4. **Port**: `3000`
+5. **Environment Variables**:
+
+| Chiave | Valore |
+|--------|--------|
+| `PUBLIC_APPWRITE_ENDPOINT` | `https://appwrite.tuodominio.it/v1` |
+| `PUBLIC_APPWRITE_PROJECT` | `tuo-project-id` |
+| `PUBLIC_APPWRITE_DATABASE_ID` | `inventarify` |
+
+6. **Domains**: `inventarify.tuo-dominio.it`
+7. **Deploy**
+
+---
+
+## 💻 Sviluppo locale (opzionale)
+
+Se vuoi sviluppare in locale prima di deployare:
+
+```bash
+cd frontend
+npm install
+
+# Crea .env locale
+cp .env.example .env
+# Modifica con il tuo endpoint Appwrite remoto
+
+npm run dev
+```
+
+> Il frontend in locale si connette direttamente ad Appwrite sul tuo server Hetzner.
+> Ricorda di aggiungere `localhost:5173` nei platform di Appwrite per CORS.
+
+---
+
+## 🧾 Dati legacy (MVP)
+
+I file CSV nella root sono i dati originali del MVP Streamlit:
+- `menu.csv` — ricette piatti
+- `prodotti_magazzino.csv` — scorte iniziali
+- `vendite.csv` — storico vendite
+
+Usa `scripts/migrate-data.py` per importarli in Appwrite.
+
+---
+
+## 🎨 Design System
+
+Vedi `DESIGN.md` — design language "Shopifi Inspired" implementato in Tailwind CSS:
+- Dual canvas: dark per marketing, light/cream per transazionale
+- Pill buttons (forma non negoziabile)
+- Thin display typography (Inter 300)
+- Accent aloe/pistachio
+
+---
+
+## 🛠️ Stack completo
+
+- **Frontend**: SvelteKit 5, TypeScript, Tailwind CSS
+- **Backend**: Appwrite (self-hosted)
+- **Database**: Appwrite Document Store
+- **Auth**: Appwrite Auth (email/password)
+- **Storage**: Appwrite Storage (CSV upload)
+- **Deploy**: Docker + Coolify + Hetzner

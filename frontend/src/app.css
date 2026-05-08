@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    font-feature-settings: "ss03";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Display typography fallback — Inter Light/Thin simulates thin display */
+  .font-display {
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    font-weight: 300;
+  }
+}
+
+@layer components {
+  /* Button variants from DESIGN.md */
+  .btn-primary-pill {
+    @apply bg-ink text-on-primary font-body text-body-md rounded-pill px-xl py-md transition-colors duration-150;
+  }
+  .btn-primary-pill:hover {
+    @apply bg-shade-70;
+  }
+  .btn-primary-pill:active {
+    @apply bg-shade-70;
+  }
+
+  .btn-outline-on-dark {
+    @apply bg-canvas-night text-on-primary font-body text-body-md rounded-pill border-2 border-on-primary px-[26px] py-md transition-colors duration-150;
+  }
+  .btn-outline-on-dark:hover {
+    @apply bg-canvas-night-elevated;
+  }
+
+  .btn-outline-on-light {
+    @apply bg-canvas-light text-ink font-body text-body-md rounded-pill border border-ink px-xl py-md transition-colors duration-150;
+  }
+  .btn-outline-on-light:hover {
+    @apply bg-canvas-cream;
+  }
+
+  .btn-aloe-pill {
+    @apply bg-aloe-10 text-ink font-body text-body-md rounded-pill px-xl py-md transition-colors duration-150;
+  }
+  .btn-aloe-pill:hover {
+    @apply brightness-95;
+  }
+
+  /* Input */
+  .input-text {
+    @apply bg-canvas-light text-ink font-body text-body-md rounded-md px-md py-[10px] border border-hairline-light outline-none transition-colors duration-150 w-full;
+  }
+  .input-text:focus {
+    @apply border-shade-50 ring-1 ring-shade-50;
+  }
+
+  /* Cards */
+  .card-pricing {
+    @apply bg-canvas-light rounded-lg p-xxl border border-hairline-light;
+  }
+  .card-pricing-featured {
+    @apply bg-aloe-10 rounded-lg p-xxl;
+  }
+  .card-pistachio-band {
+    @apply bg-pistachio-10 text-ink rounded-lg p-xxl;
+  }
+  .card-feature-cinematic {
+    @apply bg-canvas-night-elevated text-on-primary rounded-lg p-xxl;
+  }
+
+  /* Tags */
+  .pill-tag-mint {
+    @apply bg-aloe-10 text-ink font-body text-eyebrow-cap rounded-pill px-md py-xs uppercase tracking-wider;
+  }
+  .pill-tag-shade {
+    @apply bg-shade-30 text-ink font-body text-eyebrow-cap rounded-pill px-md py-xs uppercase tracking-wider;
+  }
+  .pill-tag-danger {
+    @apply bg-red-100 text-red-700 font-body text-eyebrow-cap rounded-pill px-md py-xs uppercase tracking-wider;
+  }
+
+  /* Nav */
+  .nav-bar-light {
+    @apply bg-canvas-light text-ink px-xl py-lg;
+  }
+}
