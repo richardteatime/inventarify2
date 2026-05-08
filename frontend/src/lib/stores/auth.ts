@@ -31,11 +31,11 @@ async function loadUserRole(userId: string) {
 			const doc = res.documents[0] as any;
 			userRole.set(doc.ruolo as UserRole);
 		} else {
-			// Default role if no record found
-			userRole.set('cuoco');
+			// Default role if no record found — first user gets admin
+			userRole.set('admin');
 		}
 	} catch {
-		userRole.set('cuoco');
+		userRole.set('admin');
 	}
 }
 
