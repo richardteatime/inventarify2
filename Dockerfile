@@ -1,16 +1,16 @@
 # Build stage
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package*.json .
+COPY frontend/package*.json ./
 RUN npm ci
-COPY . .
+COPY frontend/ ./
 RUN npm run build
 
 # Production stage
 FROM node:20-alpine
 WORKDIR /app
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/package*.json .
+COPY --from=builder /app/package*.json ./
 RUN npm ci --production
 ENV NODE_ENV=production
 ENV PORT=3000
