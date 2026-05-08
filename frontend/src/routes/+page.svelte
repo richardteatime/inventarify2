@@ -3,6 +3,8 @@
 	import { goto } from '$app/navigation';
 	import { user } from '$lib/stores/auth';
 	import { databases, DB_ID, COLLECTIONS, Query } from '$lib/appwrite';
+	import { listPiatti } from '$lib/database/menu';
+	import { addToast } from '$lib/stores/toast';
 	import type { Prodotto, Vendita } from '$lib/types';
 
 	let prodotti: Prodotto[] = [];
@@ -14,16 +16,20 @@
 		await loadData();
 	});
 
+	let piatti: string[] = [];
+
 	async function loadData() {
 		try {
-			const [prodRes, vendRes] = await Promise.all([
-				databases.listDocuments(DB_ID, COLLECTIONS.PRODOTTI),
-				databases.listDocuments(DB_ID, COLLECTIONS.VENDITE, [Query.limit(100)])
+			const [prodRes, vendRes, piattiRes] = await Promise.all([
+				databases.listDocuments(DB_ID, COLLECTIONS.PRODOTTI, [Query.limit(500)]),
+				databases.listDocuments(DB_ID, COLLECTIONS.VENDITE, [Query.limit(500)]),
+				listPiatti()
 			]);
 			prodotti = prodRes.documents as unknown as Prodotto[];
 			vendite = vendRes.documents as unknown as Vendita[];
+			piatti = piattiRes;
 		} catch (e) {
-			console.error(e);
+			addToast('Errore caricamento dashboard', 'error');
 		} finally {
 			loading = false;
 		}
@@ -31,7 +37,7 @@
 
 	$: prodottiSottoSoglia = prodotti.filter(p => p.quantita_attuale < p.soglia_riordino);
 	$: totaleVendite = vendite.reduce((sum, v) => sum + v.quantita_venduta, 0);
-	$: piattiUnici = new Set(vendite.map(v => v.piatto)).size;
+	$: piattiUnici = piatti.length;
 </script>
 
 <svelte:head>
