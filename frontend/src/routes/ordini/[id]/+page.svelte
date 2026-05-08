@@ -6,6 +6,9 @@
 	import { updateProdotto } from '$lib/database/prodotti';
 	import { listProdotti } from '$lib/database/prodotti';
 	import { addToast } from '$lib/stores/toast';
+	import { canEdit } from '$lib/stores/auth';
+	import { subscribeToChanges } from '$lib/realtime';
+	import { COLLECTIONS } from '$lib/appwrite';
 	import type { Ordine, OrdineItem, Prodotto } from '$lib/types';
 
 	const id = $page.params.id;
@@ -16,7 +19,14 @@
 	let loading = true;
 	let actionLoading = false;
 
-	onMount(loadData);
+	onMount(() => {
+		loadData();
+		const unsub = subscribeToChanges(
+			[COLLECTIONS.ORDINI, COLLECTIONS.ORDINI_ITEMS],
+			() => loadData()
+		);
+		return unsub;
+	});
 
 	async function loadData() {
 		try {
@@ -123,21 +133,25 @@
 	</div>
 
 	<!-- Azioni stato -->
-	<div class="flex flex-wrap gap-sm mb-lg">
-		{#if ordine.stato === 'bozza'}
-			<button on:click={() => cambiaStato('inviato')} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">Segna come inviato</button>
-		{:else if ordine.stato === 'inviato'}
-			<button on:click={() => cambiaStato('parziale')} disabled={actionLoading} class="btn-aloe-pill disabled:opacity-50">Ricezione parziale</button>
-		{/if}
-		{#if ordine.stato !== 'consegnato' && ordine.stato !== 'bozza'}
-			<button on:click={aggiornaMagazzino} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">
-				{actionLoading ? 'Aggiornamento...' : 'Aggiorna magazzino'}
-			</button>
-		{/if}
-		{#if ordine.stato === 'consegnato'}
-			<span class="pill-tag-mint">Ordine completato</span>
-		{/if}
-	</div>
+	{#if canEdit()}
+		<div class="flex flex-wrap gap-sm mb-lg">
+			{#if ordine.stato === 'bozza'}
+				<button on:click={() => cambiaStato('inviato')} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">Segna come inviato</button>
+			{:else if ordine.stato === 'inviato'}
+				<button on:click={() => cambiaStato('parziale')} disabled={actionLoading} class="btn-aloe-pill disabled:opacity-50">Ricezione parziale</button>
+			{/if}
+			{#if ordine.stato !== 'consegnato' && ordine.stato !== 'bozza'}
+				<button on:click={aggiornaMagazzino} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">
+					{actionLoading ? 'Aggiornamento...' : 'Aggiorna magazzino'}
+				</button>
+			{/if}
+			{#if ordine.stato === 'consegnato'}
+				<span class="pill-tag-mint">Ordine completato</span>
+			{/if}
+		</div>
+	{:else if ordine.stato === 'consegnato'}
+		<span class="pill-tag-mint mb-lg inline-block">Ordine completato</span>
+	{/if}
 
 	<!-- Checklist -->
 	<div class="card-pricing shadow-level-3">
@@ -152,7 +166,8 @@
 						type="checkbox"
 						checked={item.ricevuto}
 						on:change={() => toggleRicevuto(item)}
-						class="w-5 h-5 accent-ink cursor-pointer"
+						disabled={!canEdit()}
+						class="w-5 h-5 accent-ink cursor-pointer disabled:opacity-50"
 					/>
 					<div class="flex-1">
 						<div class="text-body-md text-ink font-medium">{item.prodotto}</div>

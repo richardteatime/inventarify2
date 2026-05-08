@@ -2,6 +2,9 @@
 	import { onMount } from 'svelte';
 	import { listProdotti, createProdotto, updateProdotto, deleteProdotto } from '$lib/database/prodotti';
 	import { addToast } from '$lib/stores/toast';
+	import { canEdit, canDelete } from '$lib/stores/auth';
+	import { subscribeToChanges } from '$lib/realtime';
+	import { COLLECTIONS } from '$lib/appwrite';
 	import ConfirmModal from '$lib/components/ui/ConfirmModal.svelte';
 	import type { Prodotto } from '$lib/types';
 
@@ -29,7 +32,13 @@
 		note: ''
 	};
 
-	onMount(loadData);
+	onMount(() => {
+		loadData();
+		const unsub = subscribeToChanges([COLLECTIONS.PRODOTTI], () => {
+			if (!editingId) loadData();
+		});
+		return unsub;
+	});
 
 	async function loadData() {
 		try {
@@ -120,7 +129,7 @@
 		}
 	}
 
-	$: filtered = prodotti.filter(p => 
+	$: filtered = prodotti.filter(p =>
 		p.prodotto.toLowerCase().includes(search.toLowerCase())
 	);
 	$: sottoSoglia = filtered.filter(p => p.quantita_attuale < p.soglia_riordino);
@@ -158,14 +167,16 @@
 		<a href="/magazzino/riordino" class="btn-aloe-pill text-no-underline">
 			Prodotti sotto soglia ({sottoSoglia.length})
 		</a>
-		<button on:click={() => showForm = !showForm} class="btn-primary-pill">
-			{showForm ? 'Annulla' : '+ Nuovo prodotto'}
-		</button>
+		{#if canEdit()}
+			<button on:click={() => showForm = !showForm} class="btn-primary-pill">
+				{showForm ? 'Annulla' : '+ Nuovo prodotto'}
+			</button>
+		{/if}
 	</div>
 </div>
 
 <!-- Form nuovo prodotto -->
-{#if showForm}
+{#if showForm && canEdit()}
 	<div class="card-pricing shadow-level-3 mb-lg">
 		<h3 class="font-display text-heading-md text-ink mb-lg">Nuovo prodotto</h3>
 		<div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
@@ -256,8 +267,12 @@
 								<button on:click={() => handleSaveEdit(p.$id!)} disabled={actionLoading} class="text-caption text-aloe-10 hover:text-ink mr-sm font-medium">Salva</button>
 								<button on:click={cancelEdit} class="text-caption text-shade-50 hover:text-ink font-medium">Annulla</button>
 							{:else}
-								<button on:click={() => startEdit(p)} class="text-caption text-shade-50 hover:text-ink mr-sm font-medium">Modifica</button>
-								<button on:click={() => requestDelete(p.$id!)} class="text-caption text-red-500 hover:text-red-700 font-medium">Elimina</button>
+								{#if canEdit()}
+									<button on:click={() => startEdit(p)} class="text-caption text-shade-50 hover:text-ink mr-sm font-medium">Modifica</button>
+								{/if}
+								{#if canDelete()}
+									<button on:click={() => requestDelete(p.$id!)} class="text-caption text-red-500 hover:text-red-700 font-medium">Elimina</button>
+								{/if}
 							{/if}
 						</td>
 					</tr>

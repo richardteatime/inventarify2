@@ -3,14 +3,24 @@
 	import { listProdotti } from '$lib/database/prodotti';
 	import { createOrdine, createOrdineItem } from '$lib/database/ordini';
 	import { addToast } from '$lib/stores/toast';
+	import { canEdit } from '$lib/stores/auth';
+	import { subscribeToChanges } from '$lib/realtime';
+	import { COLLECTIONS } from '$lib/appwrite';
 	import { goto } from '$app/navigation';
 	import type { Prodotto } from '$lib/types';
 
 	let prodotti: Prodotto[] = [];
 	let loading = true;
+	let actionLoading = false;
 	let fornitore = '';
 
-	onMount(async () => {
+	onMount(() => {
+		loadData();
+		const unsub = subscribeToChanges([COLLECTIONS.PRODOTTI], () => loadData());
+		return unsub;
+	});
+
+	async function loadData() {
 		try {
 			const all = await listProdotti();
 			prodotti = all.filter(p => p.quantita_attuale < p.soglia_riordino);
@@ -19,7 +29,7 @@
 		} finally {
 			loading = false;
 		}
-	});
+	}
 
 	function quantitaSuggerita(p: Prodotto): number {
 		const diff = p.soglia_riordino - p.quantita_attuale;
@@ -28,6 +38,7 @@
 
 	async function generaOrdine() {
 		if (prodotti.length === 0) return;
+		actionLoading = true;
 		try {
 			const ordine = await createOrdine({
 				data_ordine: new Date().toISOString(),
@@ -51,17 +62,19 @@
 			goto('/ordini');
 		} catch (e: any) {
 			addToast(e.message || 'Errore creazione ordine', 'error');
+		} finally {
+			actionLoading = false;
 		}
 	}
 
 	function exportCSV() {
 		const rows = prodotti.map(p => ({
 			prodotto: p.prodotto,
-			quantità: quantitaSuggerita(p)
+			quantita: quantitaSuggerita(p)
 		}));
 		const csv = [
-			'prodotto,quantità',
-			...rows.map(r => `${r.prodotto},${r.quantità}`)
+			'prodotto,quantita',
+			...rows.map(r => `${r.prodotto},${r.quantita}`)
 		].join('\n');
 		const blob = new Blob([csv], { type: 'text/csv' });
 		const url = URL.createObjectURL(blob);
@@ -79,7 +92,7 @@
 </svelte:head>
 
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm"> Prodotti da Riordinare</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm">Prodotti da Riordinare</h1>
 	<p class="text-body-md text-shade-50">Prodotti sotto la soglia di riordino</p>
 </div>
 
@@ -87,7 +100,6 @@
 	<div class="text-shade-50 text-body-md">Caricamento...</div>
 {:else if prodotti.length === 0}
 	<div class="card-pricing shadow-level-3 text-center py-xxl">
-		<div class="text-display-md mb-sm"></div>
 		<h2 class="font-display text-heading-lg text-ink mb-sm">Tutto a posto</h2>
 		<p class="text-body-md text-shade-50">Nessun prodotto sotto la soglia di riordino</p>
 		<a href="/magazzino" class="btn-primary-pill inline-block mt-lg">Torna al magazzino</a>
@@ -130,11 +142,13 @@
 				placeholder="Fornitore (opzionale)"
 				class="input-text max-w-xs"
 			/>
-			<button on:click={generaOrdine} class="btn-primary-pill">
-				 Genera ordine in app
-			</button>
+			{#if canEdit()}
+				<button on:click={generaOrdine} disabled={actionLoading} class="btn-primary-pill disabled:opacity-50">
+					{actionLoading ? 'Generazione...' : 'Genera ordine in app'}
+				</button>
+			{/if}
 			<button on:click={exportCSV} class="btn-outline-on-light">
-				 Scarica CSV
+				Scarica CSV
 			</button>
 		</div>
 	</div>

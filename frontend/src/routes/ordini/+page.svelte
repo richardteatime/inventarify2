@@ -2,12 +2,19 @@
 	import { onMount } from 'svelte';
 	import { listOrdini, listOrdineItems } from '$lib/database/ordini';
 	import { addToast } from '$lib/stores/toast';
+	import { canEdit } from '$lib/stores/auth';
+	import { subscribeToChanges } from '$lib/realtime';
+	import { COLLECTIONS } from '$lib/appwrite';
 	import type { Ordine, OrdineItem } from '$lib/types';
 
 	let ordini: (Ordine & { items?: OrdineItem[] })[] = [];
 	let loading = true;
 
-	onMount(loadData);
+	onMount(() => {
+		loadData();
+		const unsub = subscribeToChanges([COLLECTIONS.ORDINI, COLLECTIONS.ORDINI_ITEMS], () => loadData());
+		return unsub;
+	});
 
 	async function loadData() {
 		try {
@@ -47,9 +54,11 @@
 	<p class="text-body-md text-shade-50">Gestisci ordini a fornitori e ricezione merce</p>
 </div>
 
-<div class="mb-lg">
-	<a href="/magazzino/riordino" class="btn-primary-pill text-no-underline">+ Nuovo ordine da riordino</a>
-</div>
+{#if canEdit()}
+	<div class="mb-lg">
+		<a href="/magazzino/riordino" class="btn-primary-pill text-no-underline">+ Nuovo ordine da riordino</a>
+	</div>
+{/if}
 
 {#if loading}
 	<div class="text-shade-50 text-body-md">Caricamento...</div>
@@ -112,7 +121,9 @@
 			<div class="card-pricing shadow-level-3 text-center py-xxl">
 				<h3 class="font-display text-heading-lg text-ink mb-sm">Nessun ordine</h3>
 				<p class="text-body-md text-shade-50 mb-lg">Crea il tuo primo ordine dalla pagina riordino</p>
-				<a href="/magazzino/riordino" class="btn-primary-pill text-no-underline">Vai a riordino</a>
+				{#if canEdit()}
+					<a href="/magazzino/riordino" class="btn-primary-pill text-no-underline">Vai a riordino</a>
+				{/if}
 			</div>
 		{/if}
 	</div>

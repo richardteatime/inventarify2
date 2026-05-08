@@ -2,6 +2,9 @@
 	import { onMount } from 'svelte';
 	import { listVendite, deleteAllVendite } from '$lib/database/vendite';
 	import { addToast } from '$lib/stores/toast';
+	import { canDelete } from '$lib/stores/auth';
+	import { subscribeToChanges } from '$lib/realtime';
+	import { COLLECTIONS } from '$lib/appwrite';
 	import ConfirmModal from '$lib/components/ui/ConfirmModal.svelte';
 	import type { Vendita } from '$lib/types';
 
@@ -10,11 +13,15 @@
 	let actionLoading = false;
 	let resetModalOpen = false;
 
-	onMount(loadData);
+	onMount(() => {
+		loadData();
+		const unsub = subscribeToChanges([COLLECTIONS.VENDITE], () => loadData());
+		return unsub;
+	});
 
 	async function loadData() {
 		try {
-			vendite = await listVendite(200);
+			vendite = await listVendite(500);
 		} catch (e) {
 			addToast('Errore caricamento vendite', 'error');
 		} finally {
@@ -59,9 +66,11 @@
 
 <div class="flex flex-col sm:flex-row gap-sm mb-lg justify-between items-start sm:items-center">
 	<a href="/vendite/carica" class="btn-primary-pill text-no-underline">Carica nuove vendite</a>
-	<button on:click={() => resetModalOpen = true} disabled={actionLoading} class="btn-outline-on-light disabled:opacity-50">
-		Reset tutte le vendite
-	</button>
+	{#if canDelete()}
+		<button on:click={() => resetModalOpen = true} disabled={actionLoading} class="btn-outline-on-light disabled:opacity-50">
+			Reset tutte le vendite
+		</button>
+	{/if}
 </div>
 
 {#if loading}

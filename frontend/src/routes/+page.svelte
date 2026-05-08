@@ -5,18 +5,23 @@
 	import { databases, DB_ID, COLLECTIONS, Query } from '$lib/appwrite';
 	import { listPiatti } from '$lib/database/menu';
 	import { addToast } from '$lib/stores/toast';
+	import { subscribeToChanges } from '$lib/realtime';
 	import type { Prodotto, Vendita } from '$lib/types';
 
 	let prodotti: Prodotto[] = [];
 	let vendite: Vendita[] = [];
+	let piatti: string[] = [];
 	let loading = true;
 
-	onMount(async () => {
+	onMount(() => {
 		if (!$user) return;
-		await loadData();
+		loadData();
+		const unsub = subscribeToChanges(
+			[COLLECTIONS.PRODOTTI, COLLECTIONS.VENDITE],
+			() => loadData()
+		);
+		return unsub;
 	});
-
-	let piatti: string[] = [];
 
 	async function loadData() {
 		try {
@@ -75,31 +80,30 @@
 	</div>
 
 	<!-- Alert Section -->
-{#if prodottiSottoSoglia.length > 0}
-	<div class="card-pistachio-band mb-xxl border border-hairline-light">
-		<div class="flex items-center justify-between mb-md">
-			<h2 class="font-display text-heading-lg text-ink"> Prodotti sotto soglia</h2>
-			<span class="pill-tag-danger">{prodottiSottoSoglia.length} critici</span>
+	{#if prodottiSottoSoglia.length > 0}
+		<div class="card-pistachio-band mb-xxl border border-hairline-light">
+			<div class="flex items-center justify-between mb-md">
+				<h2 class="font-display text-heading-lg text-ink">Prodotti sotto soglia</h2>
+				<span class="pill-tag-danger">{prodottiSottoSoglia.length} critici</span>
+			</div>
+			<div class="space-y-sm">
+				{#each prodottiSottoSoglia as p}
+					<div class="flex items-center justify-between bg-canvas-light rounded-md px-md py-sm border border-hairline-light">
+						<span class="text-body-md text-ink font-medium">{p.prodotto}</span>
+						<span class="text-caption text-shade-50">
+							{p.quantita_attuale} {p.unita} / soglia {p.soglia_riordino} {p.unita}
+						</span>
+					</div>
+				{/each}
+			</div>
+			<a href="/magazzino/riordino" class="btn-primary-pill inline-block mt-lg">Genera ordine riordino</a>
 		</div>
-		<div class="space-y-sm">
-			{#each prodottiSottoSoglia as p}
-				<div class="flex items-center justify-between bg-canvas-light rounded-md px-md py-sm border border-hairline-light">
-					<span class="text-body-md text-ink font-medium">{p.prodotto}</span>
-					<span class="text-caption text-shade-50">
-						{p.quantita_attuale} {p.unita} / soglia {p.soglia_riordino} {p.unita}
-					</span>
-				</div>
-			{/each}
+	{:else}
+		<div class="card-pricing shadow-level-3 mb-xxl text-center py-xxl">
+			<h2 class="font-display text-heading-lg text-ink mb-sm">Tutto a posto</h2>
+			<p class="text-body-md text-shade-50">Nessun prodotto sotto la soglia di riordino</p>
 		</div>
-		<a href="/magazzino/riordino" class="btn-primary-pill inline-block mt-lg">Genera ordine riordino</a>
-	</div>
-{:else}
-	<div class="card-pricing shadow-level-3 mb-xxl text-center py-xxl">
-		<div class="text-display-md mb-sm"></div>
-		<h2 class="font-display text-heading-lg text-ink mb-sm">Tutto a posto</h2>
-		<p class="text-body-md text-shade-50">Nessun prodotto sotto la soglia di riordino</p>
-	</div>
-{/if}
+	{/if}
 
 	<!-- Quick Actions -->
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
