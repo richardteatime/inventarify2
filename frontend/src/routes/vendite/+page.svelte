@@ -36,13 +36,13 @@
 </svelte:head>
 
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm">🧾 Storico Vendite</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm"> Storico Vendite</h1>
 	<p class="text-body-md text-shade-50">Visualizza e gestisci le vendite caricate</p>
 </div>
 
 <div class="flex flex-col sm:flex-row gap-sm mb-lg justify-between items-start sm:items-center">
-	<a href="/vendite/carica" class="btn-primary-pill text-no-underline">📤 Carica nuove vendite</a>
-	<button on:click={handleReset} class="btn-outline-on-light">🗑️ Reset tutte le vendite</button>
+	<a href="/vendite/carica" class="btn-primary-pill text-no-underline"> Carica nuove vendite</a>
+	<button on:click={handleReset} class="btn-outline-on-light"> Reset tutte le vendite</button>
 </div>
 
 {#if loading}

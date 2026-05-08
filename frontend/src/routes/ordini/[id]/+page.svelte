@@ -103,12 +103,12 @@
 	<!-- Azioni stato -->
 	<div class="flex flex-wrap gap-sm mb-lg">
 		{#if ordine.stato === 'bozza'}
-			<button on:click={() => cambiaStato('inviato')} class="btn-primary-pill">📤 Segna come inviato</button>
+			<button on:click={() => cambiaStato('inviato')} class="btn-primary-pill"> Segna come inviato</button>
 		{:else if ordine.stato === 'inviato'}
-			<button on:click={() => cambiaStato('parziale')} class="btn-aloe-pill">📦 Ricezione parziale</button>
+			<button on:click={() => cambiaStato('parziale')} class="btn-aloe-pill"> Ricezione parziale</button>
 		{/if}
 		{#if ordine.stato !== 'consegnato' && ordine.stato !== 'bozza'}
-			<button on:click={aggiornaMagazzino} class="btn-primary-pill">✓ Aggiorna magazzino</button>
+			<button on:click={aggiornaMagazzino} class="btn-primary-pill"> Aggiorna magazzino</button>
 		{/if}
 		{#if ordine.stato === 'consegnato'}
 			<span class="pill-tag-mint">Ordine completato</span>
@@ -117,7 +117,7 @@
 
 	<!-- Checklist -->
 	<div class="card-pricing shadow-level-3">
-		<h3 class="font-display text-heading-md text-ink mb-lg">🧾 Checklist Ricezione</h3>
+		<h3 class="font-display text-heading-md text-ink mb-lg"> Checklist Ricezione</h3>
 		<div class="space-y-sm">
 			{#each items as item}
 				<div class="flex items-center gap-md p-md rounded-md border border-hairline-light transition-colors"

@@ -72,7 +72,7 @@
 {#if prodottiSottoSoglia.length > 0}
 	<div class="card-pistachio-band mb-xxl border border-hairline-light">
 		<div class="flex items-center justify-between mb-md">
-			<h2 class="font-display text-heading-lg text-ink">⚠️ Prodotti sotto soglia</h2>
+			<h2 class="font-display text-heading-lg text-ink"> Prodotti sotto soglia</h2>
 			<span class="pill-tag-danger">{prodottiSottoSoglia.length} critici</span>
 		</div>
 		<div class="space-y-sm">
@@ -89,7 +89,7 @@
 	</div>
 {:else}
 	<div class="card-pricing shadow-level-3 mb-xxl text-center py-xxl">
-		<div class="text-display-md mb-sm">✅</div>
+		<div class="text-display-md mb-sm"></div>
 		<h2 class="font-display text-heading-lg text-ink mb-sm">Tutto a posto</h2>
 		<p class="text-body-md text-shade-50">Nessun prodotto sotto la soglia di riordino</p>
 	</div>

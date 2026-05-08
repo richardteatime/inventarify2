@@ -90,14 +90,14 @@
 </svelte:head>
 
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm">📤 Carica Vendite</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm"> Carica Vendite</h1>
 	<p class="text-body-md text-shade-50">Importa un file CSV con le vendite giornaliere</p>
 </div>
 
 {#if step === 'upload'}
 	<div class="card-pricing shadow-level-3 text-center py-xxl">
 		<div class="w-16 h-16 mx-auto mb-lg rounded-full bg-canvas-cream flex items-center justify-center text-display-md">
-			📄
+			
 		</div>
 		<h3 class="font-display text-heading-lg text-ink mb-sm">Trascina o seleziona un file CSV</h3>
 		<p class="text-body-md text-shade-50 mb-lg max-w-md mx-auto">
@@ -112,7 +112,7 @@
 	<div class="card-pricing shadow-level-3 mb-lg">
 		<div class="flex items-center justify-between mb-md">
 			<h3 class="font-display text-heading-lg text-ink">Anteprima ({preview.length} righe)</h3>
-			<button on:click={handleReset} class="text-caption text-shade-50 hover:text-ink">✕ Annulla</button>
+			<button on:click={handleReset} class="text-caption text-shade-50 hover:text-ink"> Annulla</button>
 		</div>
 		<div class="max-h-80 overflow-auto rounded-lg border border-hairline-light mb-lg">
 			<table class="w-full">
@@ -140,12 +140,12 @@
 			{/if}
 		</div>
 		<button on:click={handleConfirm} disabled={loading} class="btn-primary-pill disabled:opacity-50">
-			{loading ? 'Caricamento...' : `✓ Conferma e carica ${preview.length} vendite`}
+			{loading ? 'Caricamento...' : ` Conferma e carica ${preview.length} vendite`}
 		</button>
 	</div>
 {:else if step === 'done'}
 	<div class="card-pricing shadow-level-3 text-center py-xxl">
-		<div class="text-display-md mb-sm">✅</div>
+		<div class="text-display-md mb-sm"></div>
 		<h3 class="font-display text-heading-lg text-ink mb-sm">Vendite caricate!</h3>
 		<p class="text-body-md text-shade-50 mb-lg">I consumi sono stati calcolati automaticamente.</p>
 		<div class="flex gap-sm justify-center">

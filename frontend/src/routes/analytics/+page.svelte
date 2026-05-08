@@ -79,7 +79,7 @@
 </svelte:head>
 
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm">📊 Analytics</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm"> Analytics</h1>
 	<p class="text-body-md text-shade-50">Report vendite, consumi e trend</p>
 </div>
 
@@ -108,7 +108,7 @@
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-xl">
 		<!-- Top Piatti -->
 		<div class="card-pricing shadow-level-3">
-			<h3 class="font-display text-heading-lg text-ink mb-lg">🍽️ Piatti più venduti</h3>
+			<h3 class="font-display text-heading-lg text-ink mb-lg"> Piatti più venduti</h3>
 			<div class="space-y-sm">
 				{#each topPiatti as [piatto, qty]}
 					<div class="flex items-center gap-sm">
@@ -127,7 +127,7 @@
 
 		<!-- Consumo Ingredienti -->
 		<div class="card-pricing shadow-level-3">
-			<h3 class="font-display text-heading-lg text-ink mb-lg">🍅 Ingredienti più consumati</h3>
+			<h3 class="font-display text-heading-lg text-ink mb-lg"> Ingredienti più consumati</h3>
 			<div class="space-y-sm">
 				{#each consumiAggregati as [prodotto, qty]}
 					<div class="flex items-center gap-sm">
@@ -146,7 +146,7 @@
 
 		<!-- Vendite per giorno -->
 		<div class="card-pricing shadow-level-3 lg:col-span-2">
-			<h3 class="font-display text-heading-lg text-ink mb-lg">📈 Vendite giornaliere</h3>
+			<h3 class="font-display text-heading-lg text-ink mb-lg"> Vendite giornaliere</h3>
 			<div class="flex items-end gap-xs h-48">
 				{#each venditePerGiorno as [giorno, qty]}
 					<div class="flex-1 flex flex-col items-center gap-xs group">

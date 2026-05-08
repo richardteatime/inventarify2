@@ -43,7 +43,7 @@
 </svelte:head>
 
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm">📋 Ordini</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm"> Ordini</h1>
 	<p class="text-body-md text-shade-50">Gestisci ordini a fornitori e ricezione merce</p>
 </div>
 
@@ -95,7 +95,7 @@
 									<td class="py-sm text-body-md text-shade-60">{item.quantita_ricevuta}</td>
 									<td class="py-sm">
 										{#if item.ricevuto}
-											<span class="pill-tag-mint">✓</span>
+											<span class="pill-tag-mint"></span>
 										{:else}
 											<span class="pill-tag-shade">In attesa</span>
 										{/if}
@@ -110,7 +110,7 @@
 
 		{#if ordini.length === 0}
 			<div class="card-pricing shadow-level-3 text-center py-xxl">
-				<div class="text-display-md mb-sm">📭</div>
+				<div class="text-display-md mb-sm"></div>
 				<h3 class="font-display text-heading-lg text-ink mb-sm">Nessun ordine</h3>
 				<p class="text-body-md text-shade-50 mb-lg">Crea il tuo primo ordine dalla pagina riordino</p>
 				<a href="/magazzino/riordino" class="btn-primary-pill text-no-underline">Vai a riordino</a>

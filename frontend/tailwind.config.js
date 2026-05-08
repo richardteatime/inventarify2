@@ -19,7 +19,7 @@ export default {
         'shade-70': '#3f3f46',
         'hairline-light': '#e4e4e7',
         'hairline-dark': '#1e2c31',
-        'aloe-10': '#c1fbd4',
+        'aloe-10': '#c1e6fb',
         'pistachio-10': '#d4f9e0',
         'link-cool-1': '#9dabad',
         'link-cool-2': '#9797a2',

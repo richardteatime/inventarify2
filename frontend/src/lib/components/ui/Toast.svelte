@@ -13,9 +13,9 @@
 	};
 
 	const icons = {
-		success: '✅',
-		error: '❌',
-		info: 'ℹ️'
+		success: '',
+		error: '',
+		info: 'ℹ'
 	};
 </script>
 
@@ -26,6 +26,6 @@
 		on:click={() => dispatch('dismiss')}
 		class="text-shade-50 hover:text-ink transition-colors text-caption"
 	>
-		✕
+		
 	</button>
 </div>

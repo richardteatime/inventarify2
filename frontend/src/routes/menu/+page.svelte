@@ -65,7 +65,7 @@
 </svelte:head>
 
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm">🍽️ Menu / Ricette</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm"> Menu / Ricette</h1>
 	<p class="text-body-md text-shade-50">Associa piatti e ingredienti per il calcolo automatico consumi</p>
 </div>
 
@@ -135,7 +135,7 @@
 								<td class="py-sm text-body-md text-ink">{item.prodotto}</td>
 								<td class="py-sm text-body-md text-shade-60">{item.quantita_prodotto}</td>
 								<td class="py-sm text-right">
-									<button on:click={() => handleDelete(item.$id!)} class="text-caption text-shade-50 hover:text-red-600">🗑️</button>
+									<button on:click={() => handleDelete(item.$id!)} class="text-caption text-shade-50 hover:text-red-600"></button>
 								</td>
 							</tr>
 						{/each}

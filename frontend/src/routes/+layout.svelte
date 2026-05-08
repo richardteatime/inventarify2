@@ -16,12 +16,12 @@
 	}
 
 	const navItems = [
-		{ label: '🏠 Dashboard', href: '/' },
-		{ label: '📦 Magazzino', href: '/magazzino' },
-		{ label: '🍽️ Menu', href: '/menu' },
-		{ label: '🧾 Vendite', href: '/vendite' },
-		{ label: '📋 Ordini', href: '/ordini' },
-		{ label: '📊 Analytics', href: '/analytics' },
+		{ label: ' Dashboard', href: '/' },
+		{ label: ' Magazzino', href: '/magazzino' },
+		{ label: ' Menu', href: '/menu' },
+		{ label: ' Vendite', href: '/vendite' },
+		{ label: ' Ordini', href: '/ordini' },
+		{ label: ' Analytics', href: '/analytics' },
 	];
 
 	function isActive(href: string) {

@@ -78,7 +78,7 @@
 </svelte:head>
 
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm">📥 Prodotti da Riordinare</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm"> Prodotti da Riordinare</h1>
 	<p class="text-body-md text-shade-50">Prodotti sotto la soglia di riordino</p>
 </div>
 
@@ -86,7 +86,7 @@
 	<div class="text-shade-50 text-body-md">Caricamento...</div>
 {:else if prodotti.length === 0}
 	<div class="card-pricing shadow-level-3 text-center py-xxl">
-		<div class="text-display-md mb-sm">✅</div>
+		<div class="text-display-md mb-sm"></div>
 		<h2 class="font-display text-heading-lg text-ink mb-sm">Tutto a posto</h2>
 		<p class="text-body-md text-shade-50">Nessun prodotto sotto la soglia di riordino</p>
 		<a href="/magazzino" class="btn-primary-pill inline-block mt-lg">Torna al magazzino</a>
@@ -130,10 +130,10 @@
 				class="input-text max-w-xs"
 			/>
 			<button on:click={generaOrdine} class="btn-primary-pill">
-				📋 Genera ordine in app
+				 Genera ordine in app
 			</button>
 			<button on:click={exportCSV} class="btn-outline-on-light">
-				📥 Scarica CSV
+				 Scarica CSV
 			</button>
 		</div>
 	</div>

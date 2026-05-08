@@ -78,7 +78,7 @@
 </svelte:head>
 
 <div class="mb-xxl">
-	<h1 class="font-display text-display-md text-ink mb-sm">📦 Magazzino</h1>
+	<h1 class="font-display text-display-md text-ink mb-sm"> Magazzino</h1>
 	<p class="text-body-md text-shade-50">Gestisci prodotti, scorte e soglie di riordino</p>
 </div>
 
@@ -92,7 +92,7 @@
 	/>
 	<div class="flex gap-sm">
 		<a href="/magazzino/riordino" class="btn-aloe-pill text-no-underline">
-			📥 Prodotti sotto soglia ({sottoSoglia.length})
+			 Prodotti sotto soglia ({sottoSoglia.length})
 		</a>
 		<button on:click={() => showForm = !showForm} class="btn-primary-pill">
 			{showForm ? 'Annulla' : '+ Nuovo prodotto'}
@@ -184,11 +184,11 @@
 						</td>
 						<td class="px-md py-sm text-right">
 							{#if editingId === p.$id}
-								<button on:click={() => handleUpdate(p.$id!, { quantita_attuale: p.quantita_attuale, prodotto: p.prodotto })} class="text-caption text-aloe-10 hover:text-ink mr-sm">✓</button>
-								<button on:click={() => editingId = null} class="text-caption text-shade-50 hover:text-ink">✕</button>
+								<button on:click={() => handleUpdate(p.$id!, { quantita_attuale: p.quantita_attuale, prodotto: p.prodotto })} class="text-caption text-aloe-10 hover:text-ink mr-sm"></button>
+								<button on:click={() => editingId = null} class="text-caption text-shade-50 hover:text-ink"></button>
 							{:else}
-								<button on:click={() => editingId = p.$id!} class="text-caption text-shade-50 hover:text-ink mr-sm">✏️</button>
-								<button on:click={() => handleDelete(p.$id!)} class="text-caption text-shade-50 hover:text-red-600">🗑️</button>
+								<button on:click={() => editingId = p.$id!} class="text-caption text-shade-50 hover:text-ink mr-sm"></button>
+								<button on:click={() => handleDelete(p.$id!)} class="text-caption text-shade-50 hover:text-red-600"></button>
 							{/if}
 						</td>
 					</tr>
